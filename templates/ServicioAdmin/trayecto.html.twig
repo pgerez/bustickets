@@ -27,7 +27,7 @@
                             {% if is_granted('ROLE_FINAL_USER') and not is_granted('ROLE_SUPER_ADMIN') %}
                                 {% if object.asientosLibres != 0 %}
                                 <a href="{{ admin.generateObjectUrl('reserva', object,{ 'origen':app.request.query.all.filter.origen.value, 'destino':app.request.query.all.filter.destino.value, 'fechahora_salida': reserva_fechahora_salida, 'fechahora_llegada': reserva_fechahora_llegada}) }}" class="btn btn-sm btn-danger view_link" title="{{ 'Reservar pasaje'|trans({}, 'SonataAdminBundle') }}" style="min-width: 80px">
-                                    <i class="fas fa-ticket-alt"></i>
+                                    <i class="fas fa-ticket-alt "></i>
                                     Reserva
                                 </a>
                                 {% else %}

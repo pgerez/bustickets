@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Controller;
 
 
+use App\Entity\User;
+use phpDocumentor\Reflection\Types\Parent_;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Response;
@@ -97,8 +99,36 @@ class SecurityController extends AbstractController
             $registro = $form->getData();
 
             $userRepository->registerFinalUser($registro, $userManager, $entityManager, $pasajeroRepository);
+            ##envio de email######
 
-            return $this->redirectToRoute('login', ["email" => $email]);
+            $user = $userRepository->findOneBy(['email' => $registro->getEmail()]);
+
+            if(null == $user) {
+                return $this->redirectToRoute('register', ['email' => $email]);
+            }
+
+            // create a login link for $user this returns an instance
+            // of LoginLinkDetails
+            $loginLinkDetails = $loginLinkHandler->createLoginLink($user);
+            $loginLink = $loginLinkDetails->getUrl();
+
+            // create a notification based on the login link details
+            // $notification = new LoginLinkNotification(
+            $notification = new CustomLoginLinkNotification(
+                $loginLinkDetails,
+                'Bienvenido a Bustickets!' // email subject
+            );
+            $notification->setLoginLinkDetails($loginLinkDetails);
+            // create a recipient for this user
+            $recipient = new Recipient($user->getEmail());
+
+            // send the notification to the user
+            $notifier->send($notification, $recipient);
+
+            // render a "Login link is sent!" page
+            return $this->redirectToRoute('login_link_sent');
+
+            #return $this->redirectToRoute('login', ["email" => $email]);
         }
 
         $context = [

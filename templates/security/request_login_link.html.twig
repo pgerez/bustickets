@@ -1,22 +1,271 @@
 {% extends 'sitebase.html.twig' %}
 
 {% block body_center %}
-<form action="{{ path('login') }}" method="POST" class="pure-form pure-form-aligned">
-    <div class="align-content-center">
-    <fieldset>
-        <legend>Ingresar con enlace por correo</legend>
-        <input type="email" name="email" value="{{ email }}" placeholder="Tu correo electrónico aquí.">
-        <button type="submit" class="pure-button pure-button-primary">Enviar Enlace</button>
-        <div class="spinner-overlay" style="display: none;">
-            <div class="spinner-container">
-                <div class="spinner"></div>
-                <p>Enviando Email, por favor espere...</p>
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>SAntiagueño Bus - Empresa de Viajes</title>
+        <!-- Bootstrap CSS para estilos rápidos y responsivos -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+        <!-- Google Fonts -->
+        <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            /* Encabezado con fondo de imagen y texto superpuesto */
+            header {
+                background: url({{ asset('images/header.jpg') }});
+                color: black;
+                #padding: 50px 20px;
+                text-align: center;
+                background-size: auto;
+                background-repeat: no-repeat;
+                background-position: bottom;
+                height: 400px;
+            }
+
+            header h1 {
+                font-family: Balloon, sans-serif;
+                padding: 15px;
+                font-size: 3rem;
+                margin-bottom: 20px;
+                #-webkit-text-stroke-width: 3px;
+                #-webkit-text-stroke-color: black;
+                color: white;
+            }
+            header p {
+                font-size: 1.2rem;
+                color: white;
+            }
+            .btn-cta {
+                background-color: #007bff;
+                color: #fff;
+                font-weight: 700;
+                padding: 15px 30px;
+                border-radius: 50px;
+                margin-top: 20px;
+                transition: background-color 0.3s;
+                text-decoration: none;
+                display: inline-block;
+            }
+            .btn-cta:hover {
+                background-color: #B41939;
+                color: #fff;
+            }
+
+            /* Sección presentación */
+            .intro {
+                padding: 50px 20px;
+                background-color: #f8f9fa;
+                text-align: center;
+            }
+            .intro h2 {
+                margin-bottom: 20px;
+                font-weight: 700;
+            }
+            .intro p {
+                font-size: 1.1rem;
+            }
+
+            /* Galería de imágenes */
+            .gallery {
+                padding: 50px 20px;
+            }
+            .gallery h2 {
+                text-align: center;
+                margin-bottom: 30px;
+            }
+            .gallery img {
+                width: 100%;
+                height: 250px;
+                object-fit: cover;
+                border-radius: 10px;
+                margin-bottom: 20px;
+                transition: transform 0.3s;
+            }
+            .gallery img:hover {
+                transform: scale(1.05);
+            }
+
+            /* Servicios destacados */
+            .services {
+                background-color: #f4f4f4;
+                padding: 50px 20px;
+            }
+            .services h2 {
+                text-align: center;
+                margin-bottom: 30px;
+            }
+            .card {
+                border: none;
+                text-align: center;
+            }
+            .card img {
+                width: 80px;
+                height: 80px;
+                margin-bottom: 15px;
+            }
+
+            /* Sección reserva */
+            .reservation {
+                padding: 50px 20px;
+                background-color: #fff;
+            }
+            .reservation h2 {
+                text-align: center;
+                margin-bottom: 30px;
+                font-weight: 700;
+            }
+            .reservation form {
+                max-width: 700px;
+                margin: 0 auto;
+            }
+
+            /* Pie de página */
+            footer {
+                background-color: #222;
+                color: #fff;
+                padding: 20px 10px;
+                text-align: center;
+            }
+            /* Responsive adjustments */
+            @media(max-width: 768px) {
+                header h1 {
+                    font-size: 2rem;
+                }
+                .btn-cta {
+                    padding: 10px 20px;
+                    font-size: 1rem;
+                }
+            }
+        </style>
+    </head>
+    <body>
+
+    <!-- Encabezado principal -->
+    <header>
+        <div style="
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 400px;
+      background-color: rgba(0, 0, 0, 0.5); /* negro transparente */
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 15px;
+      text-align: center;
+      padding: 0px;">
+            <h1><img src="{{ asset('images/caballo_santi.png') }}" style="width: 3%; transform: scaleX(-1)"> <strong>SANTIAGUEÑO BUS</strong></h1>
+            <p><strong>Tu mejor opción en viajes seguros y cómodos en Santiago del Estero</strong></p>
+            <form action="{{ path('login') }}" method="POST" class="pure-form pure-form-aligned">
+                <div class="align-content-center">
+                    <h5 style="color: white"><strong>Ingresar con enlace por correo</strong></h5>
+                    <div class="col-md-12">
+                        <input type="email" name="email" value="{{ email }}" placeholder="Tu correo electrónico aquí." class="col-md-2" required="required">
+                    </div>
+                    <div class="col-md-12">
+                        <button type="submit" class="pure-button pure-button-primary">Enviar Enlace</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </header>
+    <div class="spinner-overlay" style="display: none;">
+        <div class="spinner-container">
+            <div class="spinner"></div>
+            <p>Enviando Email, por favor espere...</p>
+        </div>
+    </div>
+
+    <!-- Sección de presentación -->
+    <div class="intro text-center">
+        <h2>¡Explora el País con Nosotros!</h2>
+        <p>Viaja en unidades modernas, con conductores expertos y atención personalizada. ¡Hacemos que tus viajes sean inolvidables!</p>
+    </div>
+
+    <!-- Galería de fotos -->
+    <div class="gallery container">
+        <h2 class="text-center mb-4">Galería de Fotos</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh2NBXuWS9ArxZFDCQgBNiRzRH421Yg_tVJyjA-RwWstxtrVks5WabU9663B7RPd68GPPbu5Micj5QpP6Sb-0HAciviZ9W9jNe9QgLVZCCPTy4-5S1SlTktAr453FZeG9vBVD2gO5vW6W5jEIBM_nDNbIzW-95FRX0dTxzGYmec1ecvfTVBLMqqP_EYyQ/w1200-h630-p-k-no-nu/225.png" class="d-block w-100" alt="Foto 1" style="width: 400px; height: 300px; object-fit: cover; margin: 0 auto;">
+            </div>
+            <div class="col-md-4">
+                <img src="https://live.staticflickr.com/4867/44211518600_c7b00d957b.jpg" class="d-block w-100" alt="Foto 2" style="width: 400px; height: 300px; object-fit: cover; margin: 0 auto;">
+            </div>
+            <div class="col-md-4">
+                <img src="https://bus-america.com/galeria/albums/userpics/10002/84/normal_ScaK400B6x2eV-ComilCampioneDD_17a60-SantiaguenoBus650mattieloV36aa575KRb_1546-120522.JPG" class="d-block w-100" alt="Foto 3" style="width: 400px; height: 300px; object-fit: cover; margin: 0 auto;">
             </div>
         </div>
-    </fieldset>
-
     </div>
-</form>
+
+    <!-- Sección Servicios -->
+    <div class="services">
+        <h2 class="text-center mb-4">Nuestros Servicios</h2>
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-4 mb-4">
+                    <img src="https://img.icons8.com/ios/80/000000/lock--v1.png" alt="Seguridad" />
+                    <h4>Viajes Seguros</h4>
+                    <p>Contamos con unidades modernas y conductores capacitados para tu tranquilidad.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <img src="https://img.icons8.com/ios/80/000000/time.png" alt="Puntualidad" />
+                    <h4>Puntualidad</h4>
+                    <p>Llegamos siempre a tiempo, respetando tu agenda y horarios.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <img src="https://img.icons8.com/ios/80/000000/bus.png" class="service-img" alt="Reserva Fácil" />
+                    <h4>Confort</h4>
+                    <p>Unidades confortables y ambientes agradables para un viaje placentero.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección Reserva
+    <div id="reservar" class="reservation">
+        <h2 class="text-center mb-4">Reserva tu Viaje</h2>
+        <p class="text-center mb-4">Completa el formulario y te contactaremos lo antes posible.</p>
+        <form>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <input type="text" class="form-control" placeholder="Nombre completo" required />
+                </div>
+                <div class="form-group col-md-6">
+                    <input type="email" class="form-control" placeholder="Correo electrónico" required />
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="tel" class="form-control" placeholder="Teléfono" required />
+            </div>
+            <div class="form-group">
+                <textarea class="form-control" rows="4" placeholder="Detalles del viaje" required></textarea>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-cta">Enviar Solicitud</button>
+            </div>
+        </form>
+    </div>
+    -->
+    <!-- Pie de página -->
+    <footer>
+        <p>&copy; 2025 Santiagueño Bus - Todos los derechos reservados</p>
+    </footer>
+
+    <!-- Scripts Bootstrap y dependencias -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    </body>
+    </html>
+
+
 
 <style>
     .spinner-overlay {

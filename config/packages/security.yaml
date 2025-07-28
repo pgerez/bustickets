@@ -36,7 +36,7 @@ security:
             context: user
             login_link:
                 check_route: login_check
-                check_post_only: true
+                #check_post_only: true
                 max_uses: 1
                 lifetime: 300
                 signature_properties: ['id']
