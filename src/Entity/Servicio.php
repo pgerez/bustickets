@@ -148,6 +148,17 @@ class Servicio
         endforeach;
          return $a-$b;
     }
+
+    public function getAsientosOcupados()
+    {
+        $b = 0;
+        foreach ($this->boletos as $boleto):
+            if($boleto->getEstado() == 3 or $boleto->getEstado() == 1):
+                $b++;
+            endif;
+        endforeach;
+        return $b;
+    }
     public function __construct()
     {
         $this->boletos = new ArrayCollection();
@@ -155,7 +166,10 @@ class Servicio
 
     public function __toString()
     {
-        return $this->trayecto->getOrigen().' > '.$this->trayecto->getDestino() ;
+        $partidaStr = $this->partida ? $this->partida->format('d/m/Y H:i') : 'Sin fecha';
+        $origen = $this->trayecto ? $this->trayecto->getOrigen() : 'Sin origen';
+        $destino = $this->trayecto ? $this->trayecto->getDestino() : 'Sin destino';
+        return sprintf('[ID: %d] %s > %s (%s)', $this->id, $origen, $destino, $partidaStr);
     }
 
     public function getFecha(): ?\DateTimeInterface {
@@ -368,5 +382,10 @@ class Servicio
         $this->destino = $destino;
 
         return $this;
+    }
+
+    public function getDetalleViaje(): ?string
+    {
+        return '';
     }
 }

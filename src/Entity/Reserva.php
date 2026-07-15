@@ -329,5 +329,19 @@ class Reserva
 
         return $this;
     }
+
+    public function getMedioPago(): ?string
+    {
+        $pago = $this->pagos->last();
+        if ($pago) {
+            return $pago->getObservacion();
+        }
+        return null;
+    }
+
+    public function getDetalleViaje(): ?string
+    {
+        return '';
+    }
     
 }

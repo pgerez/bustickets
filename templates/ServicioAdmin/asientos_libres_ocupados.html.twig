@@ -1,0 +1,7 @@
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    <span class="text-success"><strong>{{ object.asientosLibres }}</strong> Libres</span>
+    <span class="text-muted" style="margin: 0 5px;">|</span>
+    <span class="text-danger"><strong>{{ object.asientosOcupados }}</strong> Ocupados</span>
+{% endblock field %}

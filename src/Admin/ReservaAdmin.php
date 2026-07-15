@@ -47,6 +47,8 @@ final class ReservaAdmin extends BaseAdmin
         $filter
             ->add('id')
             ->add('estado')
+            ->add('user', null, ['label' => 'Comprador'])
+            ->add('servicio.id', null, ['label' => 'ID Viaje'])
         ;
     }
 
@@ -61,16 +63,19 @@ final class ReservaAdmin extends BaseAdmin
     protected function configureListFields(ListMapper $list): void
     {
         $list
-            #->add('id')
+            #->add('id', null, ['label' => 'ID'])
+            ->add('user', null, ['label' => 'Comprador'])
+            
+            ->add('detalleViaje', null, [
+                'label' => 'Detalle del Viaje',
+                'template' => 'ReservaAdmin/detalle_viaje.html.twig'
+            ])
             ->add('estado', null, ['template' => 'ReservaAdmin/estado.html.twig'])
-            ->add('origen')
-            ->add('servicio.partida', null, ['label' => 'Dia y Hora'])
-            ->add('destino')
-            ->add('servicio.llegada', null, ['label' => 'Dia y Hora'])
-            ->add('boletos', null, ['Boletos'])
+            ->add('boletos', null, ['label' => 'Boletos'])
+            ->add('payment_id', null, ['label' => 'ID Pago MP'])
             ->add(ListMapper::NAME_ACTIONS, null, [
                 'actions' => [
-                    #'show' => [],
+                    'show' => [],
                     #'edit' => [],
                     #'delete' => []
                 ],
@@ -157,6 +162,10 @@ final class ReservaAdmin extends BaseAdmin
         $show
             ->add('id')
             ->add('estado')
+            ->add('user', null, ['label' => 'Comprador'])
+            ->add('medioPago', null, ['label' => 'Medio de Pago'])
+            ->add('payment_id', null, ['label' => 'ID Pago Mercado Pago'])
+            ->add('preference_id', null, ['label' => 'ID Preferencia Mercado Pago'])
         ;
     }
 
@@ -197,8 +206,28 @@ final class ReservaAdmin extends BaseAdmin
                 ]
             ];
 
+            $entityManager = $this->getEntityManager(Reserva::class);
+
+            // Obtener datos del comprador (payer)
+            $payerData = [
+                "email" => $user->getEmail()
+            ];
+
+            if ($user->getDni()) {
+                $pasajeroPrincipal = $entityManager->getRepository(Pasajero::class)->findOneBy(['dni' => $user->getDni()]);
+                if ($pasajeroPrincipal) {
+                    $payerData["name"] = $pasajeroPrincipal->getNombre();
+                    $payerData["surname"] = $pasajeroPrincipal->getApellido();
+                }
+                $payerData["identification"] = [
+                    "type" => "DNI",
+                    "number" => (string)$user->getDni()
+                ];
+            }
+
             $requestData = [
                 "items" => $itemsForPreference,
+                "payer" => $payerData,
                 "back_urls" => [
                     "success" => $_ENV['ENV_BACK_URL'],
                     "failure" => $_ENV['ENV_BACK_URL'],
@@ -208,7 +237,6 @@ final class ReservaAdmin extends BaseAdmin
                 "auto_return" => "all", // "all" o "approved"
             ];
             $preference = $client->create($requestData);
-            $entityManager = $this->getEntityManager(Reserva::class);
             $reserva->setUrlpago($preference->init_point);#init_point
             $reserva->setPreferenceId($preference->id);
             $reserva->setUser($user);

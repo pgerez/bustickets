@@ -274,12 +274,15 @@ final class ServicioAdmin extends AbstractAdmin
 
         if(!$this->isFinalUser()):
             $list
-                #->add('id')
-                ->add('trayecto.origen')
-                ->add('trayecto.destino')
-                ->add('partida')
-                ->add('llegada')
-                ->add('asientosLibres')
+                ->add('id', null, ['label' => 'ID'])
+                ->add('detalleViaje', null, [
+                    'label' => 'Detalle del Viaje',
+                    'template' => 'ServicioAdmin/detalle_viaje.html.twig'
+                ])
+                ->add('asientosLibres', null, [
+                    'label' => 'Asientos (Libres/Ocupados)',
+                    'template' => 'ServicioAdmin/asientos_libres_ocupados.html.twig'
+                ])
                 ->add('estado', 'choice',[
                     'choices' => Servicio::$estado_nombre_choices,
                 ])

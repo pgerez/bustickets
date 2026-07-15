@@ -1,0 +1,11 @@
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    <strong>{{ object.trayecto ? object.trayecto.origen : 'Sin definir' }}</strong> &rarr; <strong>{{ object.trayecto ? object.trayecto.destino : 'Sin definir' }}</strong>
+    <br/>
+    <small class="text-muted" style="display: inline-block; margin-top: 4px;">
+        <strong>Partida:</strong> {{ object.partida ? object.partida|date('d/m/Y H:i') : 'Sin definir' }}
+        <br/>
+        <strong>Llegada:</strong> {{ object.llegada ? object.llegada|date('d/m/Y H:i') : 'Sin definir' }}
+    </small>
+{% endblock field %}
