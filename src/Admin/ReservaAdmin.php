@@ -31,6 +31,10 @@ use MercadoPago\MercadoPagoConfig;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Sonata\DoctrineORMAdminBundle\Filter\CallbackFilter;
+use Sonata\AdminBundle\Filter\Model\FilterData;
+use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 
 final class ReservaAdmin extends BaseAdmin
@@ -49,6 +53,36 @@ final class ReservaAdmin extends BaseAdmin
             ->add('estado')
             ->add('user', null, ['label' => 'Comprador'])
             ->add('servicio.id', null, ['label' => 'ID Viaje'])
+            ->add('ocultarAbandonadas', CallbackFilter::class, [
+                'label' => 'Reservas Incompletas',
+                'callback' => function (ProxyQueryInterface $queryBuilder, string $alias, string $field, FilterData $data): bool {
+                    if (!$data->hasValue() || $data->getValue() === null) {
+                        return false;
+                    }
+
+                    if ($data->getValue() === 'ocultar') {
+                        $queryBuilder->andWhere(sprintf('%s.estado IS NOT NULL', $alias))
+                                     ->andWhere(sprintf('%s.user IS NOT NULL', $alias));
+                    } elseif ($data->getValue() === 'solo_abandonadas') {
+                        $queryBuilder->andWhere(
+                            $queryBuilder->expr()->orX(
+                                sprintf('%s.estado IS NULL', $alias),
+                                sprintf('%s.user IS NULL', $alias)
+                            )
+                        );
+                    }
+
+                    return true;
+                },
+                'field_type' => ChoiceType::class,
+                'field_options' => [
+                    'choices' => [
+                        'Mostrar todas' => 'todas',
+                        'Ocultar abandonadas (sin comprador o sin estado)' => 'ocultar',
+                        'Mostrar sólo abandonadas' => 'solo_abandonadas',
+                    ],
+                ],
+            ])
         ;
     }
 
