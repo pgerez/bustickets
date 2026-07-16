@@ -1,0 +1,5 @@
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    {{ value ? value|date('d/m/Y H:i') : 'Sin fecha' }}
+{% endblock field %}

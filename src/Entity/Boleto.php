@@ -66,6 +66,11 @@ class Boleto
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $update_at = null;
 
+    public function __construct()
+    {
+        $this->update_at = new \DateTimeImmutable();
+    }
+
     public function __toString()
     {
         return 'B'.$this->id;

@@ -343,5 +343,18 @@ class Reserva
     {
         return '';
     }
+
+    public function getFechaCompra(): ?\DateTimeInterface
+    {
+        $boleto = $this->boletos->first();
+        if ($boleto && $boleto->getUpdateAt()) {
+            return $boleto->getUpdateAt();
+        }
+        $pago = $this->pagos->last();
+        if ($pago && $pago->getFecha()) {
+            return $pago->getFecha();
+        }
+        return null;
+    }
     
 }

@@ -102,6 +102,10 @@ final class ReservaAdmin extends BaseAdmin
                 'label' => 'Comprador',
                 'template' => 'ReservaAdmin/comprador.html.twig'
             ])
+            ->add('fechaCompra', null, [
+                'label' => 'Fecha Compra',
+                'template' => 'ReservaAdmin/fecha_compra.html.twig'
+            ])
             
             ->add('detalleViaje', null, [
                 'label' => 'Detalle del Viaje',
