@@ -209,8 +209,14 @@ final class ReservaAdmin extends BaseAdmin
     {
         $show
             ->add('id')
-            ->add('estado')
-            ->add('user', null, ['label' => 'Comprador'])
+            ->add('estado', null, [
+                'label' => 'Estado',
+                'template' => 'ReservaAdmin/show_estado.html.twig',
+            ])
+            ->add('user', null, [
+                'label' => 'Comprador',
+                'template' => 'ReservaAdmin/show_comprador.html.twig',
+            ])
             ->add('medioPago', null, ['label' => 'Medio de Pago'])
             ->add('payment_id', null, ['label' => 'ID Pago Mercado Pago'])
             ->add('preference_id', null, ['label' => 'ID Preferencia Mercado Pago'])
