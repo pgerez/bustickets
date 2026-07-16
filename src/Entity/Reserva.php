@@ -356,5 +356,13 @@ class Reserva
         }
         return null;
     }
+
+    public function getMontoTotal(): int
+    {
+        if ($this->costo > 0) {
+            return $this->costo;
+        }
+        return $this->calcularMontoTotal();
+    }
     
 }
