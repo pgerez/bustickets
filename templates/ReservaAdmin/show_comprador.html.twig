@@ -3,13 +3,11 @@
 {% block field %}
     {% if value is not null %}
         <div>
-            <strong>Nombre:</strong> {{ value|comprador_nombre }}<br/>
+            <strong>Nombre Completo:</strong> {{ value|comprador_nombre }}<br/>
+            <strong>Usuario:</strong> {{ value.username }}<br/>
             <strong>Email:</strong> {{ value.email }}<br/>
             {% if value.dni is not null %}
                 <strong>DNI:</strong> {{ value.dni }}<br/>
-            {% endif %}
-            {% if value.phone is not null %}
-                <strong>Teléfono:</strong> {{ value.phone }}<br/>
             {% endif %}
         </div>
     {% else %}
