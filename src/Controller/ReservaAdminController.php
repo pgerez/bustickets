@@ -102,10 +102,9 @@ final class ReservaAdminController extends CRUDController
                             </button>
                             <h3 class="box-title" style="display: flex; align-items: center; gap: 10px; font-weight: bold; font-size: 18px; margin: 0; color: white;">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" style="fill: white; display: inline-block; vertical-align: middle; margin-right: 6px;">
-                                    <rect x="6" y="2" width="12" height="13" rx="3" />
-                                    <rect x="4" y="14" width="16" height="7" rx="2" />
-                                    <rect x="3" y="10" width="2" height="7" rx="1" />
-                                    <rect x="19" y="10" width="2" height="7" rx="1" />
+                                    <rect x="8" y="2" width="8" height="3.5" rx="1" />
+                                    <path d="M7,6.5 C7,6 7.5,5.5 8,5.5 h8 c0.5,0 1,0.5 1,1 v8.5 H7 V6.5 Z" />
+                                    <rect x="5" y="15.5" width="14" height="5.5" rx="2" />
                                 </svg>
                                 <span>Pasajero - Asiento '.$numeroasiento.'</span>
                             </h3>

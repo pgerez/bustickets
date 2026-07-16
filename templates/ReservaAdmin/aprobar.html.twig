@@ -34,10 +34,9 @@
                                     {% for boleto in object.boletos %}
                                         <span style="font-size: 22px; margin-right: 20px; display: inline-block; vertical-align: middle;">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" class="text-success" style="display: inline-block; vertical-align: middle; fill: currentColor; margin-right: 6px;">
-                                                <rect x="6" y="2" width="12" height="13" rx="3" />
-                                                <rect x="4" y="14" width="16" height="7" rx="2" />
-                                                <rect x="3" y="10" width="2" height="7" rx="1" />
-                                                <rect x="19" y="10" width="2" height="7" rx="1" />
+                                                <rect x="8" y="2" width="8" height="3.5" rx="1" />
+                                                <path d="M7,6.5 C7,6 7.5,5.5 8,5.5 h8 c0.5,0 1,0.5 1,1 v8.5 H7 V6.5 Z" />
+                                                <rect x="5" y="15.5" width="14" height="5.5" rx="2" />
                                             </svg><strong>{{ boleto.asiento.numero }}</strong>
                                         </span>
                                     {% else %}
