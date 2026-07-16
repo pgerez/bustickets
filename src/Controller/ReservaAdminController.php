@@ -17,9 +17,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Sonata\AdminBundle\Controller\CRUDController;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-
+use App\Entity\User;
+use App\Notifier\TicketConfirmationNotification;
+use Symfony\Component\Notifier\NotifierInterface;
+use Symfony\Component\Notifier\Recipient\Recipient;
 
 final class ReservaAdminController extends CRUDController
 {
@@ -232,6 +233,123 @@ EOF;
 
         $this->addFlash('success', 'Pasajero Registado con exito en el asiento '.$asiento->getNumero().'!');
         return $this->redirectToRoute('admin_app_reserva_edit',['id' => $idreserva]);
+    }
+
+    public function aprobarAction(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        NotifierInterface $notifier,
+        LoggerInterface $logger
+    ): Response {
+        $id = $request->get($this->admin->getIdParameter());
+        $reserva = $this->admin->getObject($id);
+
+        if (!$reserva instanceof Reserva) {
+            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
+        }
+
+        if ($request->isMethod('POST')) {
+            $paymentId = $request->request->get('payment_id');
+            if (empty($paymentId)) {
+                $this->addFlash('sonata_flash_error', 'Debe ingresar el ID de pago de Mercado Pago.');
+                return $this->renderWithExtraParams('ReservaAdmin/aprobar.html.twig', [
+                    'action' => 'aprobar',
+                    'object' => $reserva,
+                ]);
+            }
+
+            $entityManager->beginTransaction();
+            try {
+                // Update associated Pago
+                $pago = $reserva->getPagos()->last();
+                $friendlyPaymentMethod = 'Aprobado manualmente en Backend';
+                if ($pago) {
+                    $pago->setNumeroComprobante($paymentId);
+                    $pago->setObservacion($friendlyPaymentMethod);
+                    $entityManager->persist($pago);
+                }
+
+                // Update Reserva state & payment_id
+                $reserva->setPaymentId($paymentId);
+                $reserva->setEstado(Reserva::STATE_COMPLETED);
+                $entityManager->persist($reserva);
+
+                // Update Boleto statuses & build ticketData
+                $ticketData = [];
+                foreach ($reserva->getBoletos() as $boleto) {
+                    $boleto->setEstado(Boleto::STATE_RESERVED);
+                    $entityManager->persist($boleto);
+                    $ticketData[] = [
+                        'seat_number'    => $boleto->getAsiento(),
+                        'seat_passenger' => $boleto->getPasajero()->getApellido().', '.$boleto->getPasajero()->getNombre(),
+                        'seat_dni'       => $boleto->getPasajero()->getDni(),
+                        'download_link'  => 'https://tuempresa.com/pasajes/descargar/ABCDE12345.pdf', // **GENERAR LINK SEGURO**
+                    ];
+                }
+
+                $entityManager->flush();
+                $entityManager->commit();
+
+                // Send Confirmation Email
+                $usuario = $reserva->getUser();
+                if ($usuario) {
+                    $buyerEmail = $usuario->getEmail();
+                    $buyerName = $buyerEmail;
+
+                    if ($usuario->getDni()) {
+                        $pasajeroPrincipal = $entityManager->getRepository(Pasajero::class)->findOneBy(['dni' => $usuario->getDni()]);
+                        if ($pasajeroPrincipal) {
+                            $buyerName = $pasajeroPrincipal->getNombre() . ' ' . $pasajeroPrincipal->getApellido();
+                        } else {
+                            $buyerName = $usuario->getUsername();
+                        }
+                    } else {
+                        $buyerName = $usuario->getUsername();
+                    }
+
+                    $tripData = [
+                        'origin' => $reserva->getOrigen(),
+                        'destination' => $reserva->getDestino(),
+                        'departure_date' => $reserva->getServicio()->getPartida()->format('d-m-Y H:i'),
+                        'departure_time' => $reserva->getServicio()->getLlegada()->format('d-m-Y H:i'),
+                        'company' => 'SantiagueñoBus',
+                        'service_type' => 'Servicio Comun',
+                    ];
+
+                    $transactionAmount = $pago ? $pago->getImporteRecibido() : ($reserva->calcularMontoTotal() * 0.1);
+
+                    $paymentInfo = [
+                        'amount' => $transactionAmount,
+                        'method' => $friendlyPaymentMethod,
+                        'transaction_id' => $paymentId,
+                    ];
+
+                    $notification = new TicketConfirmationNotification(
+                        $buyerName,
+                        $paymentId,
+                        $tripData,
+                        $ticketData,
+                        $paymentInfo,
+                        $buyerEmail
+                    );
+
+                    $notifier->send($notification, new Recipient($buyerEmail));
+                    $logger->info("Manual approval: confirmation email sent to {$buyerName} (ID MP: {$paymentId})");
+                }
+
+                $this->addFlash('sonata_flash_success', sprintf('Reserva %s aprobada con éxito. Los asientos han sido reservados y se envió el email de confirmación.', $reserva->getId()));
+                return $this->redirectToList();
+            } catch (\Exception $e) {
+                $entityManager->rollback();
+                $logger->error('Error en aprobación manual de reserva: ' . $e->getMessage());
+                $this->addFlash('sonata_flash_error', 'Ocurrió un error al procesar la aprobación: ' . $e->getMessage());
+            }
+        }
+
+        return $this->renderWithExtraParams('ReservaAdmin/aprobar.html.twig', [
+            'action' => 'aprobar',
+            'object' => $reserva,
+        ]);
     }
 
 }

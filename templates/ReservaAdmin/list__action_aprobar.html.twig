@@ -1,0 +1,5 @@
+{% if admin.hasAccess('edit', object) and object.estado != 2 %}
+    <a href="{{ admin.generateObjectUrl('aprobar', object) }}" class="btn btn-sm btn-success edit_link" title="Aprobar Manualmente">
+        <i class="fa fa-check" aria-hidden="true"></i> Aprobar
+    </a>
+{% endif %}

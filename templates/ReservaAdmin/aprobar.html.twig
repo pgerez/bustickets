@@ -1,0 +1,67 @@
+{% extends '@SonataAdmin/standard_layout.html.twig' %}
+
+{% block sonata_admin_content %}
+    <div class="container-fluid">
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <h3 class="box-title"><strong>Aprobación Manual de Reserva #{{ object.id }}</strong></h3>
+            </div>
+            
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4>Detalles de la Reserva</h4>
+                        <table class="table table-bordered table-striped">
+                            <tr>
+                                <th>Comprador</th>
+                                <td>{{ object.user ? object.user : 'Sin comprador' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Detalle del Viaje</th>
+                                <td>{{ object.origen }} &raquo; {{ object.destino }}</td>
+                            </tr>
+                            <tr>
+                                <th>Salida</th>
+                                <td>{{ object.servicio.partida|date('d/m/Y H:i') }} Hs</td>
+                            </tr>
+                            <tr>
+                                <th>Asientos / Boletos</th>
+                                <td>
+                                    {% for boleto in object.boletos %}
+                                        <span class="label label-info">Asiento {{ boleto.asiento.numero }}</span>
+                                    {% else %}
+                                        Sin asientos asignados
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Monto Total</th>
+                                <td>ARS {{ (object.montoTotal/100)|number_format(2, ',', '.') }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h4>Ingresar Detalles de Pago</h4>
+                        <form method="post" action="">
+                            <div class="form-group">
+                                <label for="payment_id">ID Pago Mercado Pago <span class="text-danger">*</span></label>
+                                <input type="text" id="payment_id" name="payment_id" class="form-control" required="required" placeholder="Ej: 1234567890" value="{{ object.paymentId }}">
+                                <span class="help-block">Copie y pegue el ID de pago desde la plataforma de Mercado Pago.</span>
+                            </div>
+                            
+                            <div class="form-actions" style="margin-top: 20px;">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fa fa-check"></i> Aprobar y Confirmar Reserva
+                                </button>
+                                <a href="{{ admin.generateUrl('list') }}" class="btn btn-default">
+                                    Cancelar
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

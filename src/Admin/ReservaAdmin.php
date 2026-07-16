@@ -91,7 +91,7 @@ final class ReservaAdmin extends BaseAdmin
         $collection->add('addBoleto', 'addBoleto');
         $collection->add('modalForm', 'modalForm');
         $collection->add('pagar', 'pagar');
-
+        $collection->add('aprobar', $this->getRouterIdParameter().'/aprobar');
     }
 
     protected function configureListFields(ListMapper $list): void
@@ -106,6 +106,10 @@ final class ReservaAdmin extends BaseAdmin
                 'label' => 'Fecha Compra',
                 'template' => 'ReservaAdmin/fecha_compra.html.twig'
             ])
+            ->add('montoTotal', null, [
+                'label' => 'Monto Total',
+                'template' => 'ReservaAdmin/monto.html.twig'
+            ])
             
             ->add('detalleViaje', null, [
                 'label' => 'Detalle del Viaje',
@@ -117,6 +121,9 @@ final class ReservaAdmin extends BaseAdmin
             ->add(ListMapper::NAME_ACTIONS, null, [
                 'actions' => [
                     'show' => [],
+                    'aprobar' => [
+                        'template' => 'ReservaAdmin/list__action_aprobar.html.twig',
+                    ],
                     #'edit' => [],
                     #'delete' => []
                 ],
