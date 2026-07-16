@@ -313,26 +313,13 @@
             vertical-align: middle !important;
             display: block !important;
         }
-        /* Style the passenger subform to align fields horizontally */
+        /* Hide the default editable form fields of the passenger */
         div[id$="_boletos"] table.table td[id*="_pasajero"] {
-            display: flex !important;
-            flex-wrap: wrap !important;
-            gap: 15px !important;
-            align-items: flex-end !important;
+            display: block !important;
             flex: 1 !important;
         }
         div[id$="_boletos"] table.table td[id*="_pasajero"] > .form-group {
-            margin-bottom: 0 !important;
-            flex: 1 !important;
-            min-width: 120px !important;
-        }
-        div[id$="_boletos"] table.table td[id*="_pasajero"] > .form-group > label {
-            font-size: 11px !important;
-            color: #6c757d !important;
-            text-transform: uppercase !important;
-            font-weight: 700 !important;
-            margin-bottom: 6px !important;
-            display: block !important;
+            display: none !important;
         }
         /* Hide elements that only contain hidden inputs */
         div[id$="_boletos"] table.table td:has(input[type="hidden"]):empty,
@@ -388,23 +375,70 @@
 
                 const seatNum = seatMap[seatId] || seatId;
                 const tr = input.closest('tr');
+                
+                // 1. Add seat icon and number (plain text, text-success, matching aprobar)
                 if (tr && !tr.querySelector('.custom-seat-badge-col')) {
                     const badgeCol = document.createElement('td');
                     badgeCol.className = 'custom-seat-badge-col';
                     badgeCol.style.verticalAlign = 'middle';
-                    badgeCol.style.paddingRight = '20px';
+                    badgeCol.style.paddingRight = '30px';
                     badgeCol.style.width = '140px';
                     badgeCol.innerHTML = `
-                        <div style="display: inline-flex; align-items: center; gap: 8px; background: #e8f4fd; color: #1d72b8; padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 14px; border: 1px solid #d0e7f8;">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" style="fill: currentColor; display: inline-block; vertical-align: middle; margin-right: 4px;">
+                        <span style="font-size: 22px; display: inline-flex; align-items: center; gap: 8px; vertical-align: middle; color: #27ae60; font-weight: bold;">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" class="text-success" style="display: inline-block; vertical-align: middle; fill: currentColor;">
                                 <rect x="8" y="2" width="8" height="3.5" rx="1" />
                                 <path d="M7,6.5 C7,6 7.5,5.5 8,5.5 h8 c0.5,0 1,0.5 1,1 v8.5 H7 V6.5 Z" />
                                 <rect x="5" y="15.5" width="14" height="5.5" rx="2" />
                             </svg>
-                            <span>Asiento ${seatNum}</span>
-                        </div>
+                            <span>${seatNum}</span>
+                        </span>
                     `;
                     tr.insertBefore(badgeCol, tr.firstChild);
+                }
+
+                // 2. Add plain-text passenger details next to it
+                const passengerTd = tr.querySelector('td[id*="_pasajero"]');
+                if (passengerTd && !passengerTd.querySelector('.custom-passenger-info-text')) {
+                    const nombreInput = passengerTd.querySelector('input[id$="_pasajero_nombre"]');
+                    const apellidoInput = passengerTd.querySelector('input[id$="_pasajero_apellido"]');
+                    const dniInput = passengerTd.querySelector('input[id$="_pasajero_dni"]');
+                    const sexoSelect = passengerTd.querySelector('select[id$="_pasajero_sexo"]');
+
+                    if (nombreInput && apellidoInput) {
+                        const nombre = nombreInput.value || '';
+                        const apellido = apellidoInput.value || '';
+                        const dni = dniInput ? dniInput.value : '';
+                        
+                        let sexo = '';
+                        if (sexoSelect) {
+                            const selectedOpt = sexoSelect.options[sexoSelect.selectedIndex];
+                            sexo = selectedOpt ? selectedOpt.text : '';
+                        }
+
+                        const infoDiv = document.createElement('div');
+                        infoDiv.className = 'custom-passenger-info-text';
+                        infoDiv.style.display = 'flex';
+                        infoDiv.style.flexWrap = 'wrap';
+                        infoDiv.style.gap = '25px';
+                        infoDiv.style.fontSize = '14px';
+                        infoDiv.style.color = '#333';
+                        infoDiv.style.width = '100%';
+                        infoDiv.innerHTML = `
+                            <div>
+                                <span style="color: #6c757d; font-size: 11px; text-transform: uppercase; font-weight: bold; display: block; margin-bottom: 2px;">Pasajero</span>
+                                <strong style="font-size: 15px; color: #2d3748;">${nombre} ${apellido}</strong>
+                            </div>
+                            <div>
+                                <span style="color: #6c757d; font-size: 11px; text-transform: uppercase; font-weight: bold; display: block; margin-bottom: 2px;">DNI</span>
+                                <span style="font-weight: 600; color: #4a5568;">${dni}</span>
+                            </div>
+                            <div>
+                                <span style="color: #6c757d; font-size: 11px; text-transform: uppercase; font-weight: bold; display: block; margin-bottom: 2px;">Sexo</span>
+                                <span style="font-weight: 600; color: #4a5568;">${sexo}</span>
+                            </div>
+                        `;
+                        passengerTd.appendChild(infoDiv);
+                    }
                 }
             });
         }
