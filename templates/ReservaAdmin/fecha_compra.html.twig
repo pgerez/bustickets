@@ -1,5 +1,15 @@
 {% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
 
 {% block field %}
-    {{ value ? value|date('d/m/Y H:i') : 'Sin fecha' }}
+    {% if value %}
+        <div style="font-weight: 500;">{{ value|date('d/m/Y H:i') }}</div>
+        {% set pago = object.pagos.last %}
+        {% if pago and pago.importeRecibido is not null and pago.importeRecibido > 0 %}
+            <span class="label label-success" style="display: inline-block; margin-top: 4px; font-size: 85%;">
+                MP: ARS {{ (pago.importeRecibido/100) |number_format(2, ',', '.') }}
+            </span>
+        {% endif %}
+    {% else %}
+        <span class="text-muted">Sin fecha</span>
+    {% endif %}
 {% endblock field %}
