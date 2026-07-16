@@ -248,13 +248,29 @@ EOF;
             throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
         }
 
+        $conflicts = $this->getConflictingBoletos($reserva, $entityManager);
+
         if ($request->isMethod('POST')) {
+            if (!empty($conflicts)) {
+                $conflictMessages = [];
+                foreach ($conflicts as $conflict) {
+                    $conflictMessages[] = sprintf('Asiento %s (en Reserva #%s)', $conflict['asiento'], $conflict['conflicting_reserva']);
+                }
+                $this->addFlash('sonata_flash_error', 'No se puede aprobar la reserva. Los siguientes asientos ya no están disponibles: ' . implode(', ', $conflictMessages));
+                return $this->renderWithExtraParams('ReservaAdmin/aprobar.html.twig', [
+                    'action' => 'aprobar',
+                    'object' => $reserva,
+                    'conflicts' => $conflicts,
+                ]);
+            }
+
             $paymentId = $request->request->get('payment_id');
             if (empty($paymentId)) {
                 $this->addFlash('sonata_flash_error', 'Debe ingresar el ID de pago de Mercado Pago.');
                 return $this->renderWithExtraParams('ReservaAdmin/aprobar.html.twig', [
                     'action' => 'aprobar',
                     'object' => $reserva,
+                    'conflicts' => $conflicts,
                 ]);
             }
 
@@ -350,7 +366,38 @@ EOF;
         return $this->renderWithExtraParams('ReservaAdmin/aprobar.html.twig', [
             'action' => 'aprobar',
             'object' => $reserva,
+            'conflicts' => $conflicts,
         ]);
+    }
+
+    private function getConflictingBoletos(Reserva $reserva, EntityManagerInterface $entityManager): array
+    {
+        $conflicts = [];
+        foreach ($reserva->getBoletos() as $boleto) {
+            $conflictingBoleto = $entityManager->getRepository(Boleto::class)->createQueryBuilder('b')
+                ->where('b.servicio = :servicio')
+                ->andWhere('b.asiento = :asiento')
+                ->andWhere('b.reserva != :reserva')
+                ->andWhere('b.estado IN (:occupied_states)')
+                ->setParameter('servicio', $boleto->getServicio())
+                ->setParameter('asiento', $boleto->getAsiento())
+                ->setParameter('reserva', $reserva)
+                ->setParameter('occupied_states', [
+                    Boleto::STATE_RESERVED,
+                    Boleto::STATE_RESERVED_TAKEN,
+                    Boleto::STATE_RESERVED_WAIT
+                ])
+                ->getQuery()
+                ->getOneOrNullResult();
+
+            if ($conflictingBoleto) {
+                $conflicts[] = [
+                    'asiento' => $boleto->getAsiento()->getNumero(),
+                    'conflicting_reserva' => $conflictingBoleto->getReserva()->getId(),
+                ];
+            }
+        }
+        return $conflicts;
     }
 
 }
