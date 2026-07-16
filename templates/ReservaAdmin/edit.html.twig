@@ -5,84 +5,138 @@
             {% include '@SonataTwig/FlashMessage/render.html.twig' %}
         {% endif %}
     {% endblock notice %}
+
     {% if object.showPaymentBtn %}
-    <div class="box box-primary">
-        <div class="box-header">
-            <h4><strong>{{ object.origen }}</strong> &raquo; <strong>{{ object.destino }}</strong></h4>
-            <p><u>Salida: {{ object.soloFechaSalida }} &raquo; <strong>{{ admin.subject.soloHsSalida }} Hs</strong></u></p>
-            <p><u>Llegada: {{ object.soloFechaLlegada }} &raquo; <strong>{{ admin.subject.soloHsLlegada }} Hs</strong></u></p>
-            <h4 style="text-align: right"><strong>ARS {{ (admin.subject.costo/100) |number_format(2, ',', '.') }}</strong></h4>
+    <div class="box box-solid box-primary" style="border-radius: 6px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px;">
+        <div class="box-body" style="background: linear-gradient(135deg, #3c8dbc, #2d6a8e); color: white; padding: 20px;">
+            <div class="row" style="display: flex; flex-wrap: wrap; align-items: center;">
+                <div class="col-sm-8 col-xs-12">
+                    <h3 style="margin-top: 0; font-weight: bold; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                        <i class="fa fa-bus"></i> {{ object.origen }} <i class="fa fa-long-arrow-right"></i> {{ object.destino }}
+                    </h3>
+                    <div style="font-size: 14px; opacity: 0.9; display: flex; flex-wrap: wrap; gap: 15px; margin-top: 10px;">
+                        <span><i class="fa fa-calendar-check-o"></i> <strong>Salida:</strong> {{ object.soloFechaSalida }} &raquo; {{ admin.subject.soloHsSalida }} Hs</span>
+                        <span><i class="fa fa-calendar-times-o"></i> <strong>Llegada:</strong> {{ object.soloFechaLlegada }} &raquo; {{ admin.subject.soloHsLlegada }} Hs</span>
+                    </div>
+                </div>
+                <div class="col-sm-4 col-xs-12 text-right" style="margin-top: 10px;">
+                    <span style="font-size: 20px; font-weight: bold; background: rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 4px; display: inline-block;">
+                        ARS {{ (admin.subject.costo/100)|number_format(2, ',', '.') }}
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
     {% endif %}
-  {% if object.showBoletosBtn %}
-      {% if admin.subject is not null and admin.subject.boletos is not null %}
-          <div class="box box-primary container-fluid">
-          <div class="box-header">
-              <h4><i class="fa fa-bus"></i> <strong>{{ admin.subject.origen }}</strong> &raquo; <strong>{{ admin.subject.destino }}</strong></h4>
-              <p><u>Salida: {{ object.soloFechaSalida }} &raquo; <strong>{{ admin.subject.soloHsSalida }} Hs</strong></u></p>
-              <u>Llegada: {{ object.soloFechaLlegada }} &raquo; <strong>{{ admin.subject.soloHsLlegada }} Hs</strong></u>
-          </div>
-          <div class="col-md-12 flex-column" style="background-color: white">
-          {% for boleto in admin.subject.boletos %}
-              <div class="row col-md-3 box-success">
-                          <div class="card" style="width: auto">
-                              <div class="card-header"><h4 class="card-title">Boleto <i>{{ boleto.id }}</i></h4></div>
-                              <div class="card-body">
-                                  <figure>
-                                      <blockquote class="blockquote">
-                                          <p class="card-text"><strong>Asiento: </strong>{{ boleto.asiento.numero }}</p>
-                                          <p class="card-text"><strong>Nombre: </strong>{{ boleto.pasajero.nombre }} {{ boleto.pasajero.apellido }}</p>
-                                          <p class="card-text"><strong>DNI: </strong>{{ boleto.pasajero.dni }}</p>
-                                      </blockquote>
-                                  </figure>
-                              </div>
-                          </div>
-              </div>
-          {% endfor %}
-          </div>
-          </div>
-          <div class="box box-primary container-fluid">
-              <div class="box-header">
-                  <h4><i class="fa fa-receipt"></i> <strong>Detalle de la compra</strong></h4>
-              </div>
-              {% for pago in admin.subject.pagos %}
-              <div class="box-body container-fluid">
-                  <h4>Pasajes: ARS {{ (pago.monto/100) |number_format(2, ',', '.') }}</h4>
-                  <h4>*Saldo: ARS {{ ((pago.monto-pago.importeRecibido)/100) |number_format(2, ',', '.') }}</h4>
-                  <h3><strong>Total: ARS {{ (pago.importeRecibido/100) |number_format(2, ',', '.') }}</strong></h3>
-                  <div class="help-block sonata-ba-field-help help-text">*El resto se abonará en efectivo antes de subir al colectivo</div>
-              </div>
-              {% endfor %}
-          </div>
-      {% else %}
-          <p class="alert alert-info">Aún no hay un pasajero asociado a este boleto.</p>
-      {% endif %}
 
-  {% endif %}
+    {% if object.showBoletosBtn %}
+        {% if admin.subject is not null and admin.subject.boletos is not null %}
+            <div class="box box-solid box-success" style="border-radius: 6px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px;">
+                <div class="box-header with-border" style="background-color: #f7f7f7;">
+                    <h3 class="box-title" style="display: flex; align-items: center; gap: 8px; font-weight: bold; color: #333;">
+                        <i class="fa fa-bus text-success"></i> Detalle del Viaje
+                    </h3>
+                </div>
+                <div class="box-body" style="padding: 15px;">
+                    <div class="row">
+                        <div class="col-sm-6 col-xs-12">
+                            <h4 style="margin: 0 0 10px 0; font-weight: bold; color: #3c8dbc;">
+                                {{ admin.subject.origen }} &raquo; {{ admin.subject.destino }}
+                            </h4>
+                        </div>
+                        <div class="col-sm-6 col-xs-12" style="font-size: 14px; display: flex; flex-direction: column; gap: 5px;">
+                            <span><i class="fa fa-clock-o text-muted"></i> <strong>Salida:</strong> {{ object.soloFechaSalida }} &raquo; {{ admin.subject.soloHsSalida }} Hs</span>
+                            <span><i class="fa fa-clock-o text-muted"></i> <strong>Llegada:</strong> {{ object.soloFechaLlegada }} &raquo; {{ admin.subject.soloHsLlegada }} Hs</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" style="margin-left: -10px; margin-right: -10px;">
+                <div class="col-xs-12" style="padding-left: 10px; padding-right: 10px;">
+                    <h4 style="margin: 15px 0; font-weight: bold; color: #333; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa fa-users text-primary"></i> Pasajeros y Asientos asignados
+                    </h4>
+                </div>
+                {% for boleto in admin.subject.boletos %}
+                    <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" style="padding-left: 10px; padding-right: 10px; margin-bottom: 20px;">
+                        <div class="box box-solid box-default" style="border: 1px solid #e3e3e3; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 0; height: 100%;">
+                            <div class="box-header with-border" style="background-color: #f9f9f9; padding: 10px 15px;">
+                                <h3 class="box-title" style="font-size: 14px; font-weight: bold; color: #555;">
+                                    Boleto #{{ boleto.id }}
+                                </h3>
+                            </div>
+                            <div class="box-body" style="padding: 15px; background: white;">
+                                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" class="text-success" style="fill: currentColor; flex-shrink: 0; display: inline-block; vertical-align: middle;">
+                                        <rect x="6" y="2" width="12" height="13" rx="3" />
+                                        <rect x="4" y="14" width="16" height="7" rx="2" />
+                                        <rect x="3" y="10" width="2" height="7" rx="1" />
+                                        <rect x="19" y="10" width="2" height="7" rx="1" />
+                                    </svg>
+                                    <span style="font-size: 16px; font-weight: bold; display: inline-block; vertical-align: middle;">Asiento {{ boleto.asiento.numero }}</span>
+                                </div>
+                                <div style="font-size: 13px; color: #666; line-height: 1.5;">
+                                    <div style="margin-bottom: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><strong>Pasajero:</strong> {{ boleto.pasajero.nombre }} {{ boleto.pasajero.apellido }}</div>
+                                    <div><strong>DNI:</strong> {{ boleto.pasajero.dni }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="box box-solid box-primary" style="border-radius: 6px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-top: 20px;">
+                <div class="box-header with-border" style="background-color: #f7f7f7;">
+                    <h3 class="box-title" style="display: flex; align-items: center; gap: 8px; font-weight: bold; color: #333;">
+                        <i class="fa fa-receipt text-primary"></i> Detalle del Pago
+                    </h3>
+                </div>
+                <div class="box-body" style="padding: 20px; background: white;">
+                    {% for pago in admin.subject.pagos %}
+                        <div class="row">
+                            <div class="col-md-6 col-sm-12" style="font-size: 15px; line-height: 2;">
+                                <div><strong>Pasajes:</strong> ARS {{ (pago.monto/100) |number_format(2, ',', '.') }}</div>
+                                <div class="text-danger"><strong>* Saldo a pagar:</strong> ARS {{ ((pago.monto-pago.importeRecibido)/100) |number_format(2, ',', '.') }}</div>
+                            </div>
+                            <div class="col-md-6 col-sm-12 text-right" style="margin-top: 10px;">
+                                <div style="font-size: 24px; font-weight: bold; color: #00a65a;">
+                                    Total Pagado: ARS {{ (pago.importeRecibido/100) |number_format(2, ',', '.') }}
+                                </div>
+                                <p class="help-block" style="font-style: italic; margin-top: 5px; color: #888;">
+                                    * El saldo restante se abonará en efectivo antes de subir al colectivo.
+                                </p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% else %}
+            <p class="alert alert-info">Aún no hay un pasajero asociado a este boleto.</p>
+        {% endif %}
+    {% endif %}
+
     {{ parent() }}<br>
 {% endblock %}
 
 {% block sonata_form_actions %}
   {% if object.showBoletosBtn %}
-    <button type="submit" class="btn btn-warning" name="btn_boletos">
+    <button type="submit" class="btn btn-warning" name="btn_boletos" style="margin-bottom: 5px; padding: 8px 20px;">
         <i class="fa fa-angle-double-left"></i> Volver
     </button>
   {% endif %}
 
   {% if object.showPaymentBtn and object.boletos.count > 0 %}
-    <button type="submit" class="btn btn-primary" name="btn_payment">
+    <button type="submit" class="btn btn-primary" name="btn_payment" style="margin-bottom: 5px; padding: 8px 20px;">
         <i class="fa fa-credit-card" aria-hidden="true"></i> Confirmar Asientos
     </button>
   {% endif %}
 
   {% if object.showFinalizeBtn and object.boletos.count > 0%}
-    <a href="{{ path('admin_app_reserva_pagar', {'id': object.id}) }}" name="btn_finalize" class="btn btn-primary" role="button" aria-pressed="true"><i class="fa fa-credit-card" aria-hidden="true"></i> Pagar</a>
+    <a href="{{ path('admin_app_reserva_pagar', {'id': object.id}) }}" name="btn_finalize" class="btn btn-primary" role="button" aria-pressed="true" style="margin-bottom: 5px; padding: 8px 20px;"><i class="fa fa-credit-card" aria-hidden="true"></i> Pagar</a>
   {% endif %}
-  {# Por ahora ocultar botones de admin
-  {{ parent() }}
-  #}
 {% endblock %}
+
 {% block stylesheets %}
     {{ parent() }}
     <style>
@@ -121,7 +175,7 @@
     {{ parent() }}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const tabs = document.querySelectorAll('.custom-.tabs-nav li');
+            const tabs = document.querySelectorAll('.custom-tabs-nav li');
             const panes = document.querySelectorAll('.tab-pane');
 
             document.querySelectorAll('.custom-tabs-nav li').forEach(function(tab) {
