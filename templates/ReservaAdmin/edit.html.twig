@@ -314,12 +314,13 @@
             display: block !important;
         }
         /* Hide the default editable form fields of the passenger */
-        div[id$="_boletos"] table.table td[id*="_pasajero"] {
+        div[id*="_pasajero"] .form-group {
+            display: none !important;
+        }
+        /* Make the passenger cell grow to fill the row */
+        div[id$="_boletos"] table.table > tbody > tr > td:not(.custom-seat-badge-col) {
             display: block !important;
             flex: 1 !important;
-        }
-        div[id$="_boletos"] table.table td[id*="_pasajero"] > .form-group {
-            display: none !important;
         }
         /* Hide elements that only contain hidden inputs */
         div[id$="_boletos"] table.table td:has(input[type="hidden"]):empty,
@@ -397,12 +398,12 @@
                 }
 
                 // 2. Add plain-text passenger details next to it
-                const passengerTd = tr.querySelector('td[id*="_pasajero"]');
-                if (passengerTd && !passengerTd.querySelector('.custom-passenger-info-text')) {
-                    const nombreInput = passengerTd.querySelector('input[id$="_pasajero_nombre"]');
-                    const apellidoInput = passengerTd.querySelector('input[id$="_pasajero_apellido"]');
-                    const dniInput = passengerTd.querySelector('input[id$="_pasajero_dni"]');
-                    const sexoSelect = passengerTd.querySelector('select[id$="_pasajero_sexo"]');
+                const passengerContainer = tr.querySelector('div[id*="_pasajero"]');
+                if (passengerContainer && !passengerContainer.querySelector('.custom-passenger-info-text')) {
+                    const nombreInput = passengerContainer.querySelector('input[id$="_pasajero_nombre"]');
+                    const apellidoInput = passengerContainer.querySelector('input[id$="_pasajero_apellido"]');
+                    const dniInput = passengerContainer.querySelector('input[id$="_pasajero_dni"]');
+                    const sexoSelect = passengerContainer.querySelector('select[id$="_pasajero_sexo"]');
 
                     if (nombreInput && apellidoInput) {
                         const nombre = nombreInput.value || '';
@@ -437,7 +438,7 @@
                                 <span style="font-weight: 600; color: #4a5568;">${sexo}</span>
                             </div>
                         `;
-                        passengerTd.appendChild(infoDiv);
+                        passengerContainer.appendChild(infoDiv);
                     }
                 }
             });
