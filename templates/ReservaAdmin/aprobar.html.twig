@@ -22,7 +22,11 @@
                             </tr>
                             <tr>
                                 <th>Salida</th>
-                                <td>{{ object.servicio.partida|date('d/m/Y H:i') }} Hs</td>
+                                <td>{{ (object.fechaSalida ?: (object.servicio ? object.servicio.partida : null))|date('d/m/Y H:i') }} Hs</td>
+                            </tr>
+                            <tr>
+                                <th>Llegada</th>
+                                <td>{{ (object.fechaLlegada ?: (object.servicio ? object.servicio.llegada : null))|date('d/m/Y H:i') }} Hs</td>
                             </tr>
                             <tr>
                                 <th>Asientos / Boletos</th>

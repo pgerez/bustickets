@@ -248,6 +248,11 @@ EOF;
             throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
         }
 
+        if ($reserva->getBoletos()->isEmpty()) {
+            $this->addFlash('sonata_flash_error', 'No se puede aprobar la reserva porque no tiene asientos/boletos asociados.');
+            return $this->redirectToList();
+        }
+
         $conflicts = $this->getConflictingBoletos($reserva, $entityManager);
 
         if ($request->isMethod('POST')) {
