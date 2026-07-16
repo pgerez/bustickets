@@ -162,10 +162,10 @@
             color: #fff;
             font-weight: bold;
         }
-        .tab-pane {
+        .custom-collection-tabs .tab-pane {
             display: none;
         }
-        .tab-pane.active {
+        .custom-collection-tabs .tab-pane.active {
             display: block;
         }
         
@@ -222,7 +222,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const tabs = document.querySelectorAll('.custom-tabs-nav li');
-            const panes = document.querySelectorAll('.tab-pane');
+            const panes = document.querySelectorAll('.custom-collection-tabs .tab-pane');
 
             document.querySelectorAll('.custom-tabs-nav li').forEach(function(tab) {
                 tab.addEventListener('click', function(e) {
