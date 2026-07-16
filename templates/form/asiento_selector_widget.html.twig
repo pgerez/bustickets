@@ -16,105 +16,287 @@
                 background-color: transparent !important;
             }
             .btn-outline-secondary:hover {
-                background-color: #6c757d !important; /* gris oscuro */
+                background-color: #6c757d !important;
                 color: #fff !important;
+            }
+            
+            /* Bus styling */
+            .bus-deck-wrapper {
+                margin-bottom: 30px;
+                text-align: center;
+            }
+            .bus-deck {
+                background: #f5f5f5;
+                border: 3px solid #777;
+                border-radius: 20px 20px 8px 8px;
+                padding: 15px 10px 10px 10px;
+                display: inline-block;
+                box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+                position: relative;
+                min-width: 220px;
+                border-top-width: 8px;
+            }
+            .bus-roof-front {
+                background: #333;
+                color: #fff;
+                font-size: 11px;
+                font-weight: bold;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                padding: 4px 10px;
+                border-radius: 10px 10px 0 0;
+                margin-top: -10px;
+                margin-bottom: 15px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .bus-roof-front i {
+                font-size: 13px;
+            }
+            .bus-table {
+                border-collapse: separate;
+                border-spacing: 8px;
+                margin: 0 auto;
+            }
+            .bus-table td {
+                padding: 0 !important;
+                border: none !important;
+                width: 44px;
+                height: 44px;
+                vertical-align: middle;
+                text-align: center;
+            }
+            .asiento-btn {
+                display: inline-block;
+                width: 40px;
+                height: 40px;
+                line-height: 36px;
+                font-size: 13px;
+                font-weight: bold;
+                text-align: center;
+                border-radius: 8px;
+                border: 2px solid;
+                text-decoration: none !important;
+                transition: all 0.15s ease-in-out;
+                cursor: pointer;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                padding: 0;
+                position: relative;
+                background-clip: padding-box;
+            }
+            /* Seat cushion visual structure */
+            .asiento-btn::before {
+                content: '';
+                position: absolute;
+                top: 2px;
+                left: 4px;
+                right: 4px;
+                height: 6px;
+                background: rgba(255, 255, 255, 0.35);
+                border-radius: 3px;
+            }
+            /* Hover effects */
+            .asiento-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            }
+            
+            /* Seat states */
+            .asiento-btn.estado-libre {
+                background-color: #28a745 !important;
+                color: #ffffff !important;
+                border-color: #1e7e34 !important;
+            }
+            .asiento-btn.estado-libre:hover {
+                background-color: #218838 !important;
+                border-color: #1e7e34 !important;
+            }
+            
+            .asiento-btn.estado-seleccionado {
+                background-color: #007bff !important;
+                color: #ffffff !important;
+                border-color: #0062cc !important;
+            }
+            .asiento-btn.estado-seleccionado:hover {
+                background-color: #0069d9 !important;
+                border-color: #0056b3 !important;
+            }
+            
+            .asiento-btn.estado-pendiente {
+                background-color: #ffc107 !important;
+                color: #212529 !important;
+                border-color: #d39e00 !important;
+            }
+            .asiento-btn.estado-pendiente:hover {
+                background-color: #e0a800 !important;
+                border-color: #d39e00 !important;
+            }
+            
+            .asiento-btn.estado-ocupado {
+                background-color: #dc3545 !important;
+                color: #ffffff !important;
+                border-color: #bd2130 !important;
+                cursor: not-allowed;
+                box-shadow: none;
+                opacity: 0.9;
+            }
+            .asiento-btn.estado-ocupado:hover {
+                transform: none;
+                box-shadow: none;
+            }
+            .asiento-btn.estado-ocupado i {
+                font-size: 11px;
+                display: block;
+                margin-top: 4px;
+                margin-bottom: -8px;
+            }
+            .asiento-btn.estado-ocupado span {
+                display: block;
+                margin-top: 2px;
+            }
+            
+            /* Legend styling */
+            .bus-legend {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+                margin: 20px 0;
+                padding: 10px;
+                background: #fdfdfd;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+            }
+            .legend-item {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 12px;
+                font-weight: 500;
+            }
+            .legend-color {
+                width: 16px;
+                height: 16px;
+                border-radius: 4px;
+                border: 1px solid;
             }
         </style>
     {% endblock %}
+
 {% set transporte=form.vars.transporte %}
 {% set asientos_libres=form.vars.asientos_libres %}
 {% set rows=transporte.grillaRows - 1 %}
 {% set cols=transporte.grillaCols - 1 %}
 {% set plantas=transporte.plantas - 1 %}
 
-<div class="row">
-{% for planta in 0 .. plantas %}
-<div class="col-md-2">
-    <table class="table table-bordered">
-    <theader>
-        <th colspan="{{ cols + 1 }}" style="text-align: center;">
-            Frontal
-        </th>
-        {% if plantas > 0 %}
-        <th colspan="{{ cols + 1 }}" style="text-align: center;">
-        {{ transporte.plantaLabel(planta) }}
-        </th>
-        {% endif %}
-    </theader>
-    <tbody style="text-align: center;">
-    {% for row in 0 .. rows %}
-    <tr>
-        {% for col in 0 .. cols %}
-        <td>
-        {% set asiento=transporte.getAsientoEnGrilla(planta, row, col) %}
-        {% if asiento %}
-            {% block celda_asiento %}
-                {% if asiento.id in asientos_libres or asiento.id in asientos_reserva %}{# para ver asientos reservados pero en estado de espera #}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="bus-legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #28a745; border-color: #1e7e34;"></div>
+                    <span>Libre</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #007bff; border-color: #0062cc;"></div>
+                    <span>Seleccionado</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #ffc107; border-color: #d39e00;"></div>
+                    <span>En Espera</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background-color: #dc3545; border-color: #bd2130;"></div>
+                    <span>Ocupado</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                    {% if asiento.id in asientos_reserva %}
-                        {% if asiento.id not in asientos_libres %}{# es un asiento de mi reserva pero en estado WAIT (no esta libre) #}
-                            {% set btn_class='btn btn-warning btn-lg' %}
-                            <button class="{{ btn_class }}" type="submit" name="toggle_asiento" value="{{ asiento.id }}">{{ asiento.numero }}</button>
-                        {% else %}
-                            {% set btn_class='btn btn-primary btn-lg' %}
-                            <button class="{{ btn_class }}" type="submit" name="toggle_asiento" value="{{ asiento.id }}">{{ asiento.numero }}</button>
-                        {% endif %}
-                    {% else %}
-                        {% set btn_class='btn btn-outline-secondary btn-lg' %}
-                        <a href="#" class="{{ btn_class }}" data-toggle="modal" data-target="#modal{{ asiento.id }}" onclick="procAsiento({{ form.vars.idreserva }},{{ asiento.id }},{{ asiento.numero }})">{{ asiento.numero }}</a>
-                        {# form para carga de pasajero del boleto #}
-                        <div class="modal fade" id="modal{{ asiento.id }}" tabindex="-1" role="dialog" aria-labelledby="modal" aria-hidden="true">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="createModalLabel"></h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
+    <div class="row" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
+    {% for planta in 0 .. plantas %}
+        <div class="bus-deck-wrapper col-lg-4 col-md-6 col-xs-12">
+            <div class="bus-deck">
+                <div class="bus-roof-front">
+                    <span><i class="fa fa-circle-o-notch"></i> Volante</span>
+                    <span>{{ transporte.plantaLabel(planta) }}</span>
+                </div>
+                <table class="bus-table">
+                    <tbody>
+                    {% for row in 0 .. rows %}
+                    <tr>
+                        {% for col in 0 .. cols %}
+                        <td>
+                        {% set asiento=transporte.getAsientoEnGrilla(planta, row, col) %}
+                        {% if asiento %}
+                            {% block celda_asiento %}
+                                {% if asiento.id in asientos_libres or asiento.id in asientos_reserva %}{# para ver asientos reservados pero en estado de espera #}
+                                    {% if asiento.id in asientos_reserva %}
+                                        {% if asiento.id not in asientos_libres %}{# es un asiento de mi reserva pero en estado WAIT (no esta libre) #}
+                                            {% set btn_class='asiento-btn estado-pendiente' %}
+                                            <button class="{{ btn_class }}" type="submit" name="toggle_asiento" value="{{ asiento.id }}">{{ asiento.numero }}</button>
+                                        {% else %}
+                                            {% set btn_class='asiento-btn estado-seleccionado' %}
+                                            <button class="{{ btn_class }}" type="submit" name="toggle_asiento" value="{{ asiento.id }}">{{ asiento.numero }}</button>
+                                        {% endif %}
+                                    {% else %}
+                                        {% set btn_class='asiento-btn estado-libre' %}
+                                        <a href="#" class="{{ btn_class }}" data-toggle="modal" data-target="#modal{{ asiento.id }}" onclick="procAsiento({{ form.vars.idreserva }},{{ asiento.id }},{{ asiento.numero }})">{{ asiento.numero }}</a>
+                                        
+                                        {# form para carga de pasajero del boleto #}
+                                        <div class="modal fade" id="modal{{ asiento.id }}" tabindex="-1" role="dialog" aria-labelledby="modal" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg">
+                                                <div class="modal-content" style="text-align: left;">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="createModalLabel">Cargar Pasajero para Asiento {{ asiento.numero }}</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body" id="f{{ asiento.id }}"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <script type="text/javascript">
+                                            function procAsiento(idreserva,idasiento,asientonumero) {
+                                                $.ajax({
+                                                    url: '{{ path('admin_app_reserva_modalForm') }}',
+                                                    method: 'POST',
+                                                    processData: false,
+                                                    contentType: "application/json; charset=utf-8",
+                                                    data: JSON.stringify({ "idreserva": idreserva, "idasiento": idasiento, 'asientonumero': asientonumero}),
+                                                    dataType: "json",
+                                                    success: function (data) {
+                                                        console.log('AJAX Success:', data);
+                                                        $('#f'+idasiento).append().empty();
+                                                        $('#f'+idasiento).append(data);
+                                                    }
+                                                });
+                                            }
+                                        </script>
+                                    {% endif %}
+                                {% else %}
+                                    <div class="asiento-btn estado-ocupado" title="Asiento {{ asiento.numero }} - Ocupado">
+                                        <i class="fa fa-ban"></i>
+                                        <span>{{ asiento.numero }}</span>
                                     </div>
-                                    <div class="modal-body" id="f{{ asiento.id }}"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <script type="text/javascript">
-                            function procAsiento(idreserva,idasiento,asientonumero) {
-                                $.ajax({
-                                    url: '{{ path('admin_app_reserva_modalForm') }}',
-                                    method: 'POST',
-                                    processData: false,
-                                    contentType: "application/json; charset=utf-8",
-                                    data: JSON.stringify({ "idreserva": idreserva, "idasiento": idasiento, 'asientonumero': asientonumero}),
-                                    dataType: "json",
-                                    success: function (data) {
-                                        console.log('AJAX Success:', data);
-                                        $('#f'+idasiento).append().empty();
-                                        $('#f'+idasiento).append(data);
-                                    }
-                                });
-                            }
-                        </script>
-
-                    {% endif %}
-                {% else %}
-                    <div><img src='{{ asset('images/ocupado.png' ) }}' style="width: 40px; height: 40px"></div>
-                {% endif %}
-            {% endblock %}
-        {% else %}
-            {% block celda_vacia %}
-                &nbsp;
-            {% endblock %}
-        {% endif %}
-        </td>
-        {% endfor %}
-    </tr>
+                                {% endif %}
+                            {% endblock %}
+                        {% else %}
+                            {% block celda_vacia %}
+                                &nbsp;
+                            {% endblock %}
+                        {% endif %}
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     {% endfor %}
-    </tbody>
-    </table>
+    </div>
 </div>
-{% endfor %}
-</div>
-
-
-
 {% endblock %}
-{# kate: tab-width 2 #}
