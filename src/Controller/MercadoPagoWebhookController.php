@@ -138,6 +138,12 @@ class MercadoPagoWebhookController extends AbstractController
                             return new Response('Reserva no encontrada.', Response::HTTP_NOT_FOUND);
                         }
 
+                        // Si la reserva ya fue aprobada (ej: manualmente en backend o por webhook previo)
+                        if ($reserva->getEstado() === Reserva::STATE_COMPLETED) {
+                            $logger->info("Webhook MP: Reserva {$idReserva} ya se encuentra aprobada/completada. No se requiere acción.");
+                            return new Response('Webhook recibido. La reserva ya estaba aprobada.', Response::HTTP_OK);
+                        }
+
                         // Método de pago
                         switch ($paymentMethodId) {
                             case 'visa':
