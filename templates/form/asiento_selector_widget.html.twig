@@ -246,15 +246,9 @@
                                         
                                         {# form para carga de pasajero del boleto #}
                                         <div class="modal fade" id="modal{{ asiento.id }}" tabindex="-1" role="dialog" aria-labelledby="modal" aria-hidden="true">
-                                            <div class="modal-dialog modal-lg">
-                                                <div class="modal-content" style="text-align: left;">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="createModalLabel">Cargar Pasajero para Asiento {{ asiento.numero }}</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body" id="f{{ asiento.id }}"></div>
+                                            <div class="modal-dialog" style="max-width: 500px; margin: 30px auto;">
+                                                <div class="modal-content" style="text-align: left; border-radius: 6px; overflow: hidden; border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.25);">
+                                                    <div class="modal-body" id="f{{ asiento.id }}" style="padding: 0;"></div>
                                                 </div>
                                             </div>
                                         </div>

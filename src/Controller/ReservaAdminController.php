@@ -97,6 +97,9 @@ final class ReservaAdminController extends CRUDController
         $html = '<form action="'.$url.'" method="post" enctype="multipart/form-data" style="margin: 0;">
                     <div class="box box-solid box-primary" style="margin-bottom: 0px; border-radius: 0; border: none; box-shadow: none;">
                         <div class="box-header" style="background: linear-gradient(135deg, #3c8dbc, #2d6a8e); color: white; padding: 15px 20px;">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white; opacity: 0.9; font-size: 24px; margin-top: -5px; float: right; background: none; border: none;">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
                             <h3 class="box-title" style="display: flex; align-items: center; gap: 10px; font-weight: bold; font-size: 18px; margin: 0; color: white;">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" style="fill: white; display: inline-block; vertical-align: middle; margin-right: 6px;">
                                     <rect x="6" y="2" width="12" height="13" rx="3" />
