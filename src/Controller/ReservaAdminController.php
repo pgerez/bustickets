@@ -76,7 +76,7 @@ final class ReservaAdminController extends CRUDController
         return $this->redirect($mercadopagourl);
     }
 
-    public function modalFormAction(Request $request): Response
+        public function modalFormAction(Request $request): Response
     {
         $data1      = $request->getContent();
         $data       = json_decode($data1);
@@ -94,53 +94,75 @@ final class ReservaAdminController extends CRUDController
             UrlGeneratorInterface::ABSOLUTE_URL
         );
 
-        $html = '<form action="'.$url.'" method="post" enctype="multipart/form-data">
-                    <div class="panel box box-primary" style="margin-bottom: 0px;">
-                                                <div class="box-header">
-                                                    <h4 class="box-title">
-                                                        <strong>Datos del Pasajero para el asiento '.$numeroasiento.'</strong>
-                                                    </h4>
-                                                </div>
-                                                 <div class="box-body">
-                                                        <div class="form-group" style="text-align: left">
-                                                            <label style="text-align: left" for="dni" class="control-label required">DNI</label>
-                                                            <div class="sonata-ba-field-container">
-                                                                <input placeholder="Dni" type="number" id="dni" name="dni" required="required" class="form-control" onblur="searchPasajero(this.value)"/>
-                                                                <input type="hidden" id="idasiento" name="idasiento"  value="'.$idasiento.'" class="form-control" />
-                                                                <input type="hidden" id="idreserva" name="idreserva"  value="'.$idreserva.'" class="form-control" />
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group" style="text-align: left">
-                                                            <label style="text-align: left" for="apellido" class="control-label required">Apellido</label>
-                                                            <div class="sonata-ba-field-container">
-                                                                <input placeholder="Apellido" type="text" id="apellido" name="apellido" required="required" class="form-control" />
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group" style="text-align: left">
-                                                            <label style="text-align: left" for="nombre" class="control-label required">Nombre</label>
-                                                            <div class="sonata-ba-field-container">
-                                                                <input placeholder="Nombre" type="text" id="nombre" name="nombre" required="required" class="form-control" />
-                                                            </div>
-                                                        </div>
+        $html = '<form action="'.$url.'" method="post" enctype="multipart/form-data" style="margin: 0;">
+                    <div class="box box-solid box-primary" style="margin-bottom: 0px; border-radius: 0; border: none; box-shadow: none;">
+                        <div class="box-header" style="background: linear-gradient(135deg, #3c8dbc, #2d6a8e); color: white; padding: 15px 20px;">
+                            <h3 class="box-title" style="display: flex; align-items: center; gap: 10px; font-weight: bold; font-size: 18px; margin: 0; color: white;">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" style="fill: white; display: inline-block; vertical-align: middle; margin-right: 6px;">
+                                    <rect x="6" y="2" width="12" height="13" rx="3" />
+                                    <rect x="4" y="14" width="16" height="7" rx="2" />
+                                    <rect x="3" y="10" width="2" height="7" rx="1" />
+                                    <rect x="19" y="10" width="2" height="7" rx="1" />
+                                </svg>
+                                <span>Pasajero - Asiento '.$numeroasiento.'</span>
+                            </h3>
+                        </div>
+                        <div class="box-body" style="padding: 20px 25px;">
+                            <div class="form-group" style="text-align: left; margin-bottom: 15px;">
+                                <label style="font-weight: bold; color: #444;" for="dni" class="control-label required">DNI <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-addon" style="background-color: #f5f5f5;"><i class="fa fa-id-card-o" style="color: #666;"></i></span>
+                                    <input placeholder="Ingrese el DNI para buscar o registrar" type="number" id="dni" name="dni" required="required" class="form-control" onblur="searchPasajero(this.value)" style="font-size: 14px; height: 38px;"/>
+                                </div>
+                                <span class="help-block" style="font-size: 11px; margin-top: 4px; color: #888; margin-bottom: 0;">
+                                    <i class="fa fa-info-circle"></i> Al salir del campo se buscará automáticamente si el pasajero ya existe.
+                                </span>
+                                <input type="hidden" id="idasiento" name="idasiento"  value="'.$idasiento.'" />
+                                <input type="hidden" id="idreserva" name="idreserva"  value="'.$idreserva.'" />
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-sm-6 col-xs-12">
+                                    <div class="form-group" style="text-align: left; margin-bottom: 15px;">
+                                        <label style="font-weight: bold; color: #444;" for="apellido" class="control-label required">Apellido <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon" style="background-color: #f5f5f5;"><i class="fa fa-user" style="color: #666;"></i></span>
+                                            <input placeholder="Apellido" type="text" id="apellido" name="apellido" required="required" class="form-control" style="font-size: 14px; height: 38px;" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 col-xs-12">
+                                    <div class="form-group" style="text-align: left; margin-bottom: 15px;">
+                                        <label style="font-weight: bold; color: #444;" for="nombre" class="control-label required">Nombre <span class="text-danger">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon" style="background-color: #f5f5f5;"><i class="fa fa-user" style="color: #666;"></i></span>
+                                            <input placeholder="Nombre" type="text" id="nombre" name="nombre" required="required" class="form-control" style="font-size: 14px; height: 38px;" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                                                        <div class="form-group" style="text-align: left">
-                                                            <label style="text-align: left" for="sexo" class="control-label required">Sexo</label>
-                                                            <div  class="custom-select">
-                                                                <select class="form-control" id="sexo" name="sexo" required="required">
-                                                                    <option value="">Seleccione...</option>
-                                                                    <option value="M">Masculino</option>
-                                                                    <option value="F">Femenino</option>
-                                                                    <option value="O">Otro</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                                <button type="submit" class="btn btn-primary">Guardar Datos</button>
-                                            </div>
-                    </form>';
+                            <div class="form-group" style="text-align: left; margin-bottom: 15px;">
+                                <label style="font-weight: bold; color: #444;" for="sexo" class="control-label required">Sexo <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-addon" style="background-color: #f5f5f5;"><i class="fa fa-venus-mars" style="color: #666;"></i></span>
+                                    <select class="form-control" id="sexo" name="sexo" required="required" style="font-size: 14px; height: 38px;">
+                                        <option value="">Seleccione...</option>
+                                        <option value="M">Masculino</option>
+                                        <option value="F">Femenino</option>
+                                        <option value="O">Otro</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="background-color: #f9f9f9; border-top: 1px solid #eee; padding: 15px 25px;">
+                        <button type="button" class="btn btn-default btn-flat" data-dismiss="modal" style="border-radius: 4px; padding: 8px 16px;">Cerrar</button>
+                        <button type="submit" class="btn btn-primary btn-flat" style="border-radius: 4px; padding: 8px 20px; background-color: #3c8dbc; border-color: #367fa9;">
+                            <i class="fa fa-save"></i> Guardar Pasajero
+                        </button>
+                    </div>
+                </form>';
 
         $html .= <<<EOF
                     <script type="text/javascript">
