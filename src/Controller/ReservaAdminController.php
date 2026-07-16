@@ -21,6 +21,7 @@ use App\Entity\User;
 use App\Notifier\TicketConfirmationNotification;
 use Symfony\Component\Notifier\NotifierInterface;
 use Symfony\Component\Notifier\Recipient\Recipient;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 final class ReservaAdminController extends CRUDController
 {
