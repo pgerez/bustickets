@@ -1,0 +1,5 @@
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    {{ object.user ? object.user|comprador_nombre : 'Sin comprador' }}
+{% endblock field %}

@@ -98,7 +98,10 @@ final class ReservaAdmin extends BaseAdmin
     {
         $list
             #->add('id', null, ['label' => 'ID'])
-            ->add('user', null, ['label' => 'Comprador'])
+            ->add('user', null, [
+                'label' => 'Comprador',
+                'template' => 'ReservaAdmin/comprador.html.twig'
+            ])
             
             ->add('detalleViaje', null, [
                 'label' => 'Detalle del Viaje',
