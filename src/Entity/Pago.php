@@ -15,12 +15,14 @@ class Pago
     public const PAYMENT_TYPE_CASH = 1;
     public const PAYMENT_TYPE_TRANSFER = 2;
     public const PAYMENT_TYPE_MERCADOPAGO = 3;
+    public const PAYMENT_TYPE_MERCADOPAGO_MANUAL = 4;
 
     public static $tipo_pagos = [
         self::PAYMENT_TYPE_UNSPECIFIED => 'No especificado',
         self::PAYMENT_TYPE_CASH => 'Efectivo',
         self::PAYMENT_TYPE_TRANSFER => 'Transferencia',
         self::PAYMENT_TYPE_MERCADOPAGO => 'MercadoPago',
+        self::PAYMENT_TYPE_MERCADOPAGO_MANUAL => 'MercadoPago (Manual)',
     ];
 
     #[ORM\Id]

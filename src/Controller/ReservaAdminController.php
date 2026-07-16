@@ -266,6 +266,7 @@ EOF;
                 if ($pago) {
                     $pago->setNumeroComprobante($paymentId);
                     $pago->setObservacion($friendlyPaymentMethod);
+                    $pago->setTipo(Pago::PAYMENT_TYPE_MERCADOPAGO_MANUAL);
                     $entityManager->persist($pago);
                 }
 
