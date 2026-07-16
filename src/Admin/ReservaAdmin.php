@@ -186,7 +186,7 @@ final class ReservaAdmin extends BaseAdmin
             ], [
                 'btn_add' => false,
                 'edit' => 'inline',
-                'inline' => 'standard',
+                'inline' => 'table',
                 'label' => false,
             ])
         ->end()
