@@ -5,33 +5,7 @@
     font-style: normal;
 }
 
-/* Custom Sonata Admin Styles - Corporate Green Theme */
-
-/* Header navbar and brand logo */
-.main-header .logo {
-    background-color: #047857 !important; /* Emerald 700 */
-    color: #ffffff !important;
-    font-family: 'Inter', 'Segoe UI', sans-serif !important;
-    font-weight: 700 !important;
-    border-bottom: 1px solid #035e45 !important;
-    transition: background-color 0.15s ease-in-out !important;
-}
-
-.main-header .logo:hover {
-    background-color: #065f46 !important; /* Emerald 800 */
-}
-
-.main-header .navbar {
-    background-color: #10b981 !important; /* Emerald 500 */
-}
-
-.main-header .navbar .sidebar-toggle {
-    color: #ffffff !important;
-}
-
-.main-header .navbar .sidebar-toggle:hover {
-    background-color: #059669 !important; /* Emerald 600 */
-}
+/* Custom Sonata Admin Styles - Left Sidebar Menu Only */
 
 /* Sidebar background */
 .main-sidebar, .left-side {
@@ -115,19 +89,4 @@
 .sidebar-form .btn {
     background-color: #022c22 !important;
     color: #a7f3d0 !important;
-}
-
-/* Fix active box headers and elements to match green */
-.box.box-primary {
-    border-top-color: #10b981 !important;
-}
-
-.btn-primary {
-    background-color: #10b981 !important;
-    border-color: #059669 !important;
-}
-
-.btn-primary:hover, .btn-primary:active, .btn-primary.focus, .btn-primary:focus {
-    background-color: #059669 !important;
-    border-color: #047857 !important;
 }
