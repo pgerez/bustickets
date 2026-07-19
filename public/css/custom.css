@@ -142,14 +142,13 @@
     font-size: 16px;
     font-weight: 700;
     color: #0f172a;
-    display: flex;
-    align-items: center;
-    gap: 8px;
     margin: 0;
+    line-height: 1.4;
 }
 
 .service-route i {
     color: #059669;
+    margin-right: 6px;
 }
 
 .service-badge-seats {
@@ -287,5 +286,19 @@
     
     .box-body.no-padding {
         padding: 10px !important;
+    }
+
+    .action-block {
+        display: block !important;
+        width: 100% !important;
+    }
+
+    .action-block > a,
+    .action-block > span,
+    .action-block > div {
+        display: block !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        margin-top: 10px !important;
     }
 }
