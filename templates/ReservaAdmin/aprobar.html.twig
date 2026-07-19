@@ -45,8 +45,16 @@
                                 </td>
                             </tr>
                             <tr>
-                                <th>Monto Total</th>
+                                <th>Monto Total del Pasaje</th>
                                 <td>ARS {{ (object.montoTotal/100)|number_format(2, ',', '.') }}</td>
+                            </tr>
+                            <tr>
+                                <th>Seña Abonada (10% Mercado Pago)</th>
+                                <td>
+                                    {% set pago = object.pagos|last %}
+                                    {% set seña_monto = pago ? pago.importeRecibido : (object.montoTotal * 0.1) %}
+                                    <strong class="text-success">ARS {{ (seña_monto/100)|number_format(2, ',', '.') }}</strong>
+                                </td>
                             </tr>
                         </table>
                     </div>
