@@ -256,6 +256,14 @@
     display: inline-block;
 }
 
+/* Ensure box-sizing border-box on all service card elements */
+.service-card,
+.service-card *,
+.service-card *::before,
+.service-card *::after {
+    box-sizing: border-box !important;
+}
+
 /* Fix mobile horizontal scrolling on the service list */
 @media (max-width: 767px) {
     .sonata-ba-list table.table {
@@ -286,6 +294,30 @@
     
     .box-body.no-padding {
         padding: 10px !important;
+    }
+
+    .service-card {
+        padding: 12px !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
+    }
+
+    .service-header {
+        display: block !important;
+        width: 100% !important;
+        border-bottom: 1px solid #f1f5f9 !important;
+        padding-bottom: 10px !important;
+        margin-bottom: 12px !important;
+    }
+
+    .service-route {
+        display: block !important;
+        width: 100% !important;
+        margin-bottom: 8px !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+        white-space: normal !important;
     }
 
     .action-block {
