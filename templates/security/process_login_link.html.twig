@@ -1,304 +1,344 @@
 {% extends 'sitebase.html.twig' %}
 
 {% block body_center %}
-
-
     <!DOCTYPE html>
     <html lang="es">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>SAntiagueño Bus - Empresa de Viajes</title>
-        <!-- Bootstrap CSS para estilos rápidos y responsivos -->
+        <title>Santiagueño Bus - Confirmar Acceso</title>
+        <!-- Bootstrap CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet" />
         <!-- Google Fonts -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
         <style>
             body {
+                font-family: 'Inter', sans-serif;
                 margin: 0;
                 padding: 0;
+                background-color: #f9fafb;
+                color: #1f2937;
             }
-            /* Encabezado con fondo de imagen y texto superpuesto */
-            header {
-                background: url({{ asset('images/header.jpg') }});
-                color: black;
-                #padding: 50px 20px;
-                text-align: center;
-                background-size: auto;
-                background-repeat: no-repeat;
-                background-position: bottom;
-                height: 400px;
+            
+            /* Encabezado Corporativo */
+            .hero-section {
+                background: linear-gradient(135deg, rgba(16, 185, 129, 0.85) 0%, rgba(4, 120, 87, 0.95) 100%), url({{ asset('images/header.jpg') }});
+                background-size: cover;
+                background-position: center;
+                min-height: 580px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 40px 20px;
+                position: relative;
             }
 
-            header h1 {
-                font-family: Balloon, sans-serif;
-                padding: 15px;
-                font-size: 3rem;
-                margin-bottom: 20px;
-                #-webkit-text-stroke-width: 3px;
-                #-webkit-text-stroke-color: black;
-                color: white;
+            .hero-container {
+                max-width: 1000px;
+                width: 100%;
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 40px;
+                align-items: center;
             }
-            header p {
+
+            @media (min-width: 992px) {
+                .hero-container {
+                    grid-template-columns: 1.2fr 0.8fr;
+                }
+            }
+
+            .hero-text {
+                color: #ffffff;
+            }
+
+            .hero-text h1 {
+                font-size: 2.8rem;
+                font-weight: 800;
+                line-height: 1.2;
+                margin-bottom: 20px;
+                letter-spacing: -1px;
+            }
+
+            .hero-text p {
                 font-size: 1.2rem;
-                color: white;
-            }
-            .btn-cta {
-                background-color: #007bff;
-                color: #fff;
-                font-weight: 700;
-                padding: 15px 30px;
-                border-radius: 50px;
-                margin-top: 20px;
-                transition: background-color 0.3s;
-                text-decoration: none;
-                display: inline-block;
-            }
-            .btn-cta:hover {
-                background-color: #B41939;
-                color: #fff;
-            }
-
-            /* Sección presentación */
-            .intro {
-                padding: 50px 20px;
-                background-color: #f8f9fa;
-                text-align: center;
-            }
-            .intro h2 {
-                margin-bottom: 20px;
-                font-weight: 700;
-            }
-            .intro p {
-                font-size: 1.1rem;
-            }
-
-            /* Galería de imágenes */
-            .gallery {
-                padding: 50px 20px;
-            }
-            .gallery h2 {
-                text-align: center;
+                opacity: 0.9;
                 margin-bottom: 30px;
+                line-height: 1.6;
             }
-            .gallery img {
+
+            /* Tarjeta de Confirmación */
+            .login-card {
+                background: #ffffff;
+                border-radius: 16px;
+                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+                padding: 40px 30px;
+                border: 1px solid rgba(255, 255, 255, 0.8);
+                text-align: center;
+            }
+
+            .login-logo {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            .login-logo img {
+                height: 60px;
+                width: 60px;
+                object-fit: contain;
+            }
+
+            .login-title {
+                font-size: 1.4rem;
+                font-weight: 700;
+                color: #111827;
+                margin-bottom: 12px;
+            }
+
+            .login-subtitle {
+                font-size: 0.95rem;
+                color: #4b5563;
+                line-height: 1.6;
+                margin-bottom: 25px;
+            }
+
+            .btn-login {
+                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                color: #ffffff;
+                border: none;
+                border-radius: 8px;
+                padding: 14px 20px;
+                font-weight: 600;
+                width: 100%;
+                transition: transform 0.1s, box-shadow 0.15s;
+                box-shadow: 0 4px 6px rgba(16, 185, 129, 0.15);
+            }
+
+            .btn-login:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 6px 12px rgba(16, 185, 129, 0.25);
+                color: #ffffff;
+            }
+
+            .btn-login:active {
+                transform: translateY(0);
+            }
+
+            /* Introducción y Servicios */
+            .intro-section {
+                padding: 60px 20px;
+                background-color: #ffffff;
+                border-bottom: 1px solid #f3f4f6;
+            }
+
+            .section-header {
+                text-align: center;
+                margin-bottom: 40px;
+            }
+
+            .section-header h2 {
+                font-size: 2rem;
+                font-weight: 800;
+                color: #111827;
+            }
+
+            .feature-card {
+                text-align: center;
+                padding: 30px 20px;
+                border-radius: 12px;
+                transition: transform 0.2s;
+            }
+
+            .feature-card:hover {
+                transform: translateY(-4px);
+            }
+
+            .feature-icon-wrapper {
+                background-color: #ecfdf5;
+                color: #10b981;
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 20px;
+            }
+
+            .feature-card h3 {
+                font-size: 1.25rem;
+                font-weight: 700;
+                color: #111827;
+                margin-bottom: 10px;
+            }
+
+            .feature-card p {
+                color: #4b5563;
+                font-size: 0.95rem;
+            }
+
+            /* Galería */
+            .gallery-section {
+                padding: 60px 20px;
+                background-color: #f9fafb;
+            }
+
+            .gallery-img-wrapper {
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+                margin-bottom: 30px;
+                transition: transform 0.2s;
+            }
+
+            .gallery-img-wrapper:hover {
+                transform: scale(1.02);
+            }
+
+            .gallery-img-wrapper img {
                 width: 100%;
                 height: 250px;
                 object-fit: cover;
-                border-radius: 10px;
-                margin-bottom: 20px;
-                transition: transform 0.3s;
-            }
-            .gallery img:hover {
-                transform: scale(1.05);
             }
 
-            /* Servicios destacados */
-            .services {
-                background-color: #f4f4f4;
-                padding: 50px 20px;
-            }
-            .services h2 {
-                text-align: center;
-                margin-bottom: 30px;
-            }
-            .card {
-                border: none;
-                text-align: center;
-            }
-            .card img {
-                width: 80px;
-                height: 80px;
-                margin-bottom: 15px;
-            }
-
-            /* Sección reserva */
-            .reservation {
-                padding: 50px 20px;
-                background-color: #fff;
-            }
-            .reservation h2 {
-                text-align: center;
-                margin-bottom: 30px;
-                font-weight: 700;
-            }
-            .reservation form {
-                max-width: 700px;
-                margin: 0 auto;
-            }
-
-            /* Pie de página */
+            /* Footer */
             footer {
-                background-color: #222;
-                color: #fff;
-                padding: 20px 10px;
+                background-color: #111827;
+                color: #9ca3af;
+                padding: 40px 20px;
                 text-align: center;
-            }
-            /* Responsive adjustments */
-            @media(max-width: 768px) {
-                header h1 {
-                    font-size: 2rem;
-                }
-                .btn-cta {
-                    padding: 10px 20px;
-                    font-size: 1rem;
-                }
+                font-size: 0.9rem;
+                border-top: 1px solid #1f2937;
             }
         </style>
     </head>
     <body>
 
-    <!-- Encabezado principal -->
-    <header>
-        <div style="
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 400px;
-      background-color: rgba(0, 0, 0, 0.5); /* negro transparente */
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 24px;
-      text-align: center;
-      padding: 0px;">
-            <h1><img src="{{ asset('images/caballo_santi.png') }}" style="width: 3%; transform: scaleX(-1)"> <strong>SANTIAGUEÑO BUS</strong></h1>
-            <p><strong>Tu mejor opción en viajes seguros y cómodos en Santiago del Estero</strong></p>
-            <a href="{{ path('login') }}" class="btn btn-cta mt-4">Reserva tu Pasaje</a>
+    <!-- Hero Section with Confirmation Form -->
+    <div class="hero-section">
+        <div class="hero-container">
+            <div class="hero-text">
+                <h1>Viajá de Forma Inteligente y Segura</h1>
+                <p>Gestioná tus pasajes corporativos y personales de forma ágil desde nuestro nuevo portal de autogestión. Confort y puntualidad garantizados para tus viajes en Santiago del Estero.</p>
+            </div>
+            
+            <div class="login-card">
+                <div class="login-logo">
+                    <img src="{{ asset('images/bus.png') }}" alt="Santiagueño Bus Logo" />
+                </div>
+                <h2 class="login-title">Confirmar Acceso</h2>
+                <p class="login-subtitle">
+                    Estás por iniciar sesión de forma segura. Hacé click en el botón a continuación para completar tu ingreso.
+                </p>
+                <form action="{{ path('login_check') }}" method="POST">
+                    <input type="hidden" name="expires" value="{{ expires }}">
+                    <input type="hidden" name="user" value="{{ user }}">
+                    <input type="hidden" name="hash" value="{{ hash }}">
+
+                    <button type="submit" class="btn btn-login">
+                        Ingresar al Sistema
+                    </button>
+                </form>
+            </div>
         </div>
+    </div>
 
-
-    </header>
+    <!-- Spinner Overlay -->
+    <div class="spinner-overlay" style="display: none;">
+        <div class="spinner-container">
+            <div class="spinner"></div>
+            <p style="font-weight: 600; color: #374151; margin: 0;">Iniciando sesión, por favor espere...</p>
+        </div>
+    </div>
 
     <!-- Sección de presentación -->
-    <div class="intro text-center">
-        <p>Hola! Vas a iniciar sesión en el sistema de Santiagueño Bus, presiona el boton para confirmar.</p>
-        <form action="{{ path('login_check') }}" method="POST">
-            <input type="hidden" name="expires" value="{{ expires }}">
-            <input type="hidden" name="user" value="{{ user }}">
-            <input type="hidden" name="hash" value="{{ hash }}">
-
-            <button type="submit" class="btn-cta">Continuar</button>
-        </form>
+    <div class="intro-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Servicio Corporativo Premium</h2>
+                <p class="text-muted">Un estándar de viaje diseñado para la máxima comodidad de tu equipo</p>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon-wrapper">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                        </div>
+                        <h3>Viajes Seguros</h3>
+                        <p>Flotas modernas equipadas con la última tecnología en seguridad y rastreo satelital constante.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon-wrapper">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h3>Puntualidad Absoluta</h3>
+                        <p>Monitoreo dinámico de rutas y horarios rigurosos para que llegues a destino exactamente a tiempo.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon-wrapper">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                            </svg>
+                        </div>
+                        <h3>Máximo Confort</h3>
+                        <p>Unidades semicama y cama con climatización, puertos USB y butacas ergonómicas premium.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Galería de fotos -->
-    <div class="gallery container">
-        <h2 class="text-center mb-4">Galería de Fotos</h2>
-        <div class="row">
-            <div class="col-md-4">
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh2NBXuWS9ArxZFDCQgBNiRzRH421Yg_tVJyjA-RwWstxtrVks5WabU9663B7RPd68GPPbu5Micj5QpP6Sb-0HAciviZ9W9jNe9QgLVZCCPTy4-5S1SlTktAr453FZeG9vBVD2gO5vW6W5jEIBM_nDNbIzW-95FRX0dTxzGYmec1ecvfTVBLMqqP_EYyQ/w1200-h630-p-k-no-nu/225.png" class="d-block w-100" alt="Foto 1" style="width: 400px; height: 300px; object-fit: cover; margin: 0 auto;">
-            </div>
-            <div class="col-md-4">
-                <img src="https://live.staticflickr.com/4867/44211518600_c7b00d957b.jpg" class="d-block w-100" alt="Foto 2" style="width: 400px; height: 300px; object-fit: cover; margin: 0 auto;">
-            </div>
-            <div class="col-md-4">
-                <img src="https://bus-america.com/galeria/albums/userpics/10002/84/normal_ScaK400B6x2eV-ComilCampioneDD_17a60-SantiaguenoBus650mattieloV36aa575KRb_1546-120522.JPG" class="d-block w-100" alt="Foto 3" style="width: 400px; height: 300px; object-fit: cover; margin: 0 auto;">
-            </div>
-        </div>
-    </div>
-
-    <!-- Sección Servicios -->
-    <div class="services">
-        <h2 class="text-center mb-4">Nuestros Servicios</h2>
+    <div class="gallery-section">
         <div class="container">
-            <div class="row text-center">
-                <div class="col-md-4 mb-4">
-                    <img src="https://img.icons8.com/ios/80/000000/lock--v1.png" alt="Seguridad" />
-                    <h4>Viajes Seguros</h4>
-                    <p>Contamos con unidades modernas y conductores capacitados para tu tranquilidad.</p>
+            <div class="section-header">
+                <h2>Nuestra Flota</h2>
+                <p class="text-muted">Unidades de última generación listas para tu viaje</p>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="gallery-img-wrapper">
+                        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh2NBXuWS9ArxZFDCQgBNiRzRH421Yg_tVJyjA-RwWstxtrVks5WabU9663B7RPd68GPPbu5Micj5QpP6Sb-0HAciviZ9W9jNe9QgLVZCCPTy4-5S1SlTktAr453FZeG9vBVD2gO5vW6W5jEIBM_nDNbIzW-95FRX0dTxzGYmec1ecvfTVBLMqqP_EYyQ/w1200-h630-p-k-no-nu/225.png" alt="Unidad Santiagueño Bus 1">
+                    </div>
                 </div>
-                <div class="col-md-4 mb-4">
-                    <img src="https://img.icons8.com/ios/80/000000/time.png" alt="Puntualidad" />
-                    <h4>Puntualidad</h4>
-                    <p>Llegamos siempre a tiempo, respetando tu agenda y horarios.</p>
+                <div class="col-md-4">
+                    <div class="gallery-img-wrapper">
+                        <img src="https://live.staticflickr.com/4867/44211518600_c7b00d957b.jpg" alt="Unidad Santiagueño Bus 2">
+                    </div>
                 </div>
-                <div class="col-md-4 mb-4">
-                    <img src="https://img.icons8.com/ios/80/000000/bus.png" class="service-img" alt="Reserva Fácil" />
-                    <h4>Confort</h4>
-                    <p>Unidades confortables y ambientes agradables para un viaje placentero.</p>
+                <div class="col-md-4">
+                    <div class="gallery-img-wrapper">
+                        <img src="https://bus-america.com/galeria/albums/userpics/10002/84/normal_ScaK400B6x2eV-ComilCampioneDD_17a60-SantiaguenoBus650mattieloV36aa575KRb_1546-120522.JPG" alt="Unidad Santiagueño Bus 3">
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Sección Reserva
-    <div id="reservar" class="reservation">
-        <h2 class="text-center mb-4">Reserva tu Viaje</h2>
-        <p class="text-center mb-4">Completa el formulario y te contactaremos lo antes posible.</p>
-        <form>
-            <div class="form-row">
-                <div class="form-group col-md-6">
-                    <input type="text" class="form-control" placeholder="Nombre completo" required />
-                </div>
-                <div class="form-group col-md-6">
-                    <input type="email" class="form-control" placeholder="Correo electrónico" required />
-                </div>
-            </div>
-            <div class="form-group">
-                <input type="tel" class="form-control" placeholder="Teléfono" required />
-            </div>
-            <div class="form-group">
-                <textarea class="form-control" rows="4" placeholder="Detalles del viaje" required></textarea>
-            </div>
-            <div class="text-center">
-                <button type="submit" class="btn btn-cta">Enviar Solicitud</button>
-            </div>
-        </form>
-    </div>
-    -->
     <!-- Pie de página -->
     <footer>
-        <p>&copy; 2025 Santiagueño Bus - Todos los derechos reservados</p>
+        <p style="font-weight: 700; color: #ffffff; margin-bottom: 10px;">Santiagueño Bus</p>
+        <p>&copy; {{ "now"|date("Y") }} Santiagueño Bus - Todos los derechos reservados.</p>
     </footer>
 
     <!-- Scripts Bootstrap y dependencias -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    </body>
-    </html>
-
-
-
-    <style>
-        .spinner-overlay {
-            position: fixed; /* ocupa toda la pantalla */
-            top: 0; left: 0; right: 0; bottom: 0;
-            display: flex; /* usar Flexbox */
-            align-items: center; /* centrar verticalmente */
-            justify-content: center; /* centrar horizontalmente */
-            background: rgba(0, 0, 0, 0.3); /* fondo semi-transparente */
-            z-index: 9999; /* por encima de todo */
-        }
-
-        .spinner-container {
-            text-align: center;
-            background: #fff; /* opcional, fondo blanco para spinner */
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.2);
-        }
-
-        /* Estilo del spinner */
-        .spinner {
-            border: 8px solid #f3f3f3;
-            border-top: 8px solid #3498db;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            animation: spin 2s linear infinite;
-            margin: 0 auto 10px;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
-
     <script>
         document.querySelector('form').addEventListener('submit', function() {
             document.querySelector('.spinner-overlay').style.display = 'flex';
         });
     </script>
+    </body>
+    </html>
 {% endblock %}
