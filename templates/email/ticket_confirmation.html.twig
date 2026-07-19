@@ -76,8 +76,8 @@
         <h2>Detalles de Pago:</h2>
         <table class="details-table">
             <tr>
-                <th>Monto Total Pagado</th>
-                <td>{{ payment.amount }}</td>
+                <th>Monto Abonado por Mercado Pago</th>
+                <td>$ {{ payment.amount|number_format(2, ',', '.') }}</td>
             </tr>
             <tr>
                 <th>Método de Pago</th>

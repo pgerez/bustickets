@@ -363,7 +363,7 @@ EOF;
                         'service_type' => 'Servicio Comun',
                     ];
 
-                    $transactionAmount = $pago ? $pago->getImporteRecibido() : ($reserva->calcularMontoTotal() * 0.1);
+                    $transactionAmount = ($pago ? $pago->getImporteRecibido() : ($reserva->calcularMontoTotal() * 0.1)) / 100;
 
                     $paymentInfo = [
                         'amount' => $transactionAmount,
