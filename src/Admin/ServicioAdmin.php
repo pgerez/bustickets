@@ -103,23 +103,28 @@ final class ServicioAdmin extends AbstractAdmin
     {
         if ($this->isFinalUser()) {
             $filters = $this->getFilterParameters();
-            if (isset($filters['origen']) && isset($filters['destino'])) {
+            $hasOrigen = isset($filters['origen']['value']) && $filters['origen']['value'] !== '';
+            $hasDestino = isset($filters['destino']['value']) && $filters['destino']['value'] !== '';
+
+            if ($hasOrigen && $hasDestino) {
                 $filterParadaO = $filters['origen']['value'];
                 $filterParadaD = $filters['destino']['value'];
 
-                if ($filterParadaO !== '' && $filterParadaO !== '') {
-                    $query->join($query->getRootAlias() . '.trayecto', 't')
-                        ->join('t.trayectoParadas', 'tp_origen', 'WITH', 'tp_origen.parada = :origen ')
-                        ->join('t.trayectoParadas', 'tp_destino', 'WITH', 'tp_destino.parada = :destino ')
-                        ->where('tp_origen.nro_orden < tp_destino.nro_orden')
-                        ->andWhere('tp_origen.tipo_parada_id = 1')
-                        ->andWhere('tp_destino.tipo_parada_id = 2')
-                        ->andWhere($query->getRootAlias() . '.estado = 2')
-                        ->setParameter('origen', $filterParadaO)
-                        ->setParameter('destino', $filterParadaD);
-                }
+                $query->join($query->getRootAlias() . '.trayecto', 't')
+                    ->join('t.trayectoParadas', 'tp_origen', 'WITH', 'tp_origen.parada = :origen ')
+                    ->join('t.trayectoParadas', 'tp_destino', 'WITH', 'tp_destino.parada = :destino ')
+                    ->where('tp_origen.nro_orden < tp_destino.nro_orden')
+                    ->andWhere('tp_origen.tipo_parada_id = 1')
+                    ->andWhere('tp_destino.tipo_parada_id = 2')
+                    ->andWhere($query->getRootAlias() . '.estado = 2')
+                    ->andWhere($query->getRootAlias() . '.partida >= :currentDate')
+                    ->setParameter('origen', $filterParadaO)
+                    ->setParameter('destino', $filterParadaD)
+                    ->setParameter('currentDate', new \DateTime());
             } else {
-                $query->where($query->getRootAlias() . '.id = -100');
+                $query->where($query->getRootAlias() . '.estado = 2')
+                    ->andWhere($query->getRootAlias() . '.partida >= :currentDate')
+                    ->setParameter('currentDate', new \DateTime());
             }
         } elseif($this->isGranted('ROLE_SUPER_ADMIN')){
             $filters = $this->getFilterParameters();
@@ -127,7 +132,7 @@ final class ServicioAdmin extends AbstractAdmin
                 $filterParadaO = $filters['origen']['value'];
                 $filterParadaD = $filters['destino']['value'];
 
-                if ($filterParadaO !== '' && $filterParadaO !== '') {
+                if ($filterParadaO !== '' && $filterParadaD !== '') {
                     $query->join($query->getRootAlias() . '.trayecto', 't')
                         ->join('t.trayectoParadas', 'tp_origen', 'WITH', 'tp_origen.parada = :origen ')
                         ->join('t.trayectoParadas', 'tp_destino', 'WITH', 'tp_destino.parada = :destino ')

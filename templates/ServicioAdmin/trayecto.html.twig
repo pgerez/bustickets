@@ -1,150 +1,161 @@
 {% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
 
 {% block field %}
-    {% set origen = app.request.query.all.filter.origen.value %}
-    {% set destino = app.request.query.all.filter.destino.value %}
+    {% set filter_origen = app.request.query.all.filter.origen.value|default(null) %}
+    {% set filter_destino = app.request.query.all.filter.destino.value|default(null) %}
+    
+    {% set origen = filter_origen is not empty ? filter_origen : object.trayecto.origen.id %}
+    {% set destino = filter_destino is not empty ? filter_destino : object.trayecto.destino.id %}
+    
     {% set fecha_salida = object.partida|date_modify(object.origenDestinoTrayectoDias(origen)) %}
     {% set fecha_llegada = object.partida|date_modify(object.origenDestinoTrayectoDias(destino)) %}
     {% set reserva_fechahora_salida = fecha_salida|date('Y-m-d')~ ' ' ~object.origenDestinoTrayectoHs(origen)|date('H:i') %}
     {% set reserva_fechahora_llegada = fecha_llegada|date('Y-m-d')~ ' ' ~object.origenDestinoTrayectoHs(destino)|date('H:i') %}
-    <div class="list-group mb-5 border border-primary container-fluid" style="border-color: #3c8dbc">
-            <div class=" justify-content-between align-items-center">
-                <!-- Icono o Logo -->
-                <div class="align-items-center">
-                    <div class="border-bottom" style="padding-left: 5px">
-                        <h5><i class="fas fa-bus"></i> <strong>{{ object.origenDestinoTrayecto(origen) }}</strong> &raquo; <strong>{{ object.origenDestinoTrayecto(destino) }} </strong></h5>
-                    </div>
 
-                    <div class="container-fluid" style="padding-right: 1px">
-                        <div style="float: left">
-                            {% if object.asientosLibres != 0  %}
-                                Pasajes <span class="badge rounded-pill text-bg-warning">{{ object.asientosLibres }}</span> <a href="#" data-toggle="modal" data-target="#modal{{ object.id }}" >Trayecto</a>
-                            {% else %}
-                                <span class="badge badge-danger">Sin Pasajes</span>
-                            {% endif %}
-                        </div>
-                        <div style="float: right">
-                            {% if is_granted('ROLE_FINAL_USER') and not is_granted('ROLE_SUPER_ADMIN') %}
-                                {% if object.asientosLibres != 0 %}
-                                <a href="{{ admin.generateObjectUrl('reserva', object,{ 'origen':app.request.query.all.filter.origen.value, 'destino':app.request.query.all.filter.destino.value, 'fechahora_salida': reserva_fechahora_salida, 'fechahora_llegada': reserva_fechahora_llegada}) }}" class="btn btn-sm btn-danger view_link" title="{{ 'Reservar pasaje'|trans({}, 'SonataAdminBundle') }}" style="min-width: 80px">
-                                    <i class="fas fa-ticket-alt "></i>
-                                    Reserva
-                                </a>
-                                {% else %}
-                                    <a href="{{ admin.generateObjectUrl('reserva', object) }}" class="btn btn-sm btn-danger disabled" title="{{ 'Reservar pasaje'|trans({}, 'SonataAdminBundle') }}" style="min-width: 80px">
-                                        <i class="fas fa-ban"></i>
-                                        Agotado
-                                    </a>
-                                {% endif %}
-                            {% endif %}
-                            {%  if is_granted('ROLE_USER_BOLETO') and not is_granted('ROLE_SUPER_ADMIN')%}
-                                <a href="{{ path('admin_app_servicio_boleto_list', {'id': object.id}) }}" class="btn btn-sm btn-primary view_link" title="{{ 'Listar Boletos'|trans({}, 'SonataAdminBundle') }}" style="min-width: 80px">
-                                    <i class="fas fa-address-card"></i>
-                                    Boletos
-                                </a>
-                            {% endif %}
-                            {% if is_granted('ROLE_SUPER_ADMIN') %}
-                                <div class="btn-group-vertical" role="group">
-                                    <button id="btnGroupDrop1" type="button" class="btn btn-sm btn-danger view_link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="fa fa-gear"></i>
-                                        Acciones
-                                    </button>
-                                    <div class="dropdown-menu" aria-labelledby="btnGroupDrop1" style="min-width: 80px; margin: 0; padding: 0;">
-
-                                        {#  <a href="{{ admin.generateObjectUrl('reserva', object, {'origen':app.request.query.all.filter.origen.value, 'destino':app.request.query.all.filter.destino.value, 'fechahora_salida': reserva_fechahora_salida, 'fechahora_llegada': reserva_fechahora_llegada}) }}" class="btn btn-sm btn-default view_link" title="{{ 'Reservar pasaje'|trans({}, 'SonataAdminBundle') }}" style="min-width: 80px">
-                                            <i class="fas fa-ticket-alt"></i>
-                                            Reserva
-                                        </a><br>#}
-                                            <a href="{{ path('admin_app_servicio_archivo',  {'id': object.id}) }}" class="btn btn-sm btn-default view_link" title="{{ 'Reservar pasaje'|trans({}, 'SonataAdminBundle') }}" style="min-width: 80px">
-                                            <i class="fas fa-file"></i>
-                                            Archivo
-                                        </a><br>
-                                        <a href="{{ path('admin_app_servicio_boleto_list', {'id': object.id}) }}" class="btn btn-sm btn-default view_link" title="{{ 'Listar Boletos'|trans({}, 'SonataAdminBundle') }}" style="min-width: 80px">
-                                            <i class="fas fa-address-card"></i>
-                                            Boletos
-                                        </a><br>
-                                        <a href="{{ admin.generateObjectUrl('edit', object) }}" class="btn btn-sm btn-default view_link" title="{{ 'Reservar pasaje'|trans({}, 'SonataAdminBundle') }}" style="min-width: 80px">
-                                            <i class="fas fa-edit"></i>
-                                            Editar
-                                        </a>{#<br>
-                                          <a href="{{ admin.generateObjectUrl('delete', object) }}" class="btn btn-sm btn-default view_link" title="{{ 'Reservar pasaje'|trans({}, 'SonataAdminBundle') }}" style="min-width: 80px">
-                                            <i class="fas fa-trash"></i>
-                                            Borrar
-                                        </a>#}
-                                    </div>
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="align-items-center" style="min-height: auto;">
-                        <div class="card col-md-4 col-xs-4">
-                            <div class="card-header">
-
-                                <cite title="Source Title">Salida</cite> <br><i class="fa fa-clock-o"></i> {{ object.origenDestinoTrayectoHs(origen)|date('H:i') }}
-                            </div>
-                            <div class="card-body">
-                                <figure>
-                                    <blockquote class="blockquote" style="padding: 5px 5px">
-                                        <i class="fa fa-calendar-day"></i> <strong>{{ fecha_salida|esp_date('%a %d %b') }}</strong>
-                                    </blockquote>
-                                </figure>
-                            </div>
-                        </div>
-                        <div class="card col-md-4 col-xs-4">
-                            <div class="card-header">
-                                <cite title="Source Title">LLegada</cite><br><i class="fa fa-clock-o"></i> {{ object.origenDestinoTrayectoHs(destino)|date('H:i') }}
-                            </div>
-                            <div class="card-body">
-                                <figure>
-                                    <blockquote class="blockquote" style="padding: 5px 5px">
-                                        <i class="fa fa-calendar-day"></i> <strong>{{ fecha_llegada|esp_date('%a %d %b') }}</strong>
-                                    </blockquote>
-                                </figure>
-                            </div>
-                        </div>
-                        <div class="card col-md-4 col-xs-4">
-                            <div class="card-header">
-                                <br>ARS
-                            </div>
-                            <div class="card-body">
-                                <figure>
-                                    <blockquote class="blockquote" style="padding: 5px 5px">
-                                        {% set nuevo_precio= admin.getServicioCosto(origen, destino) %}
-                                        <strong>{{ (nuevo_precio/100) |number_format(2, ',', '.') }}</strong>
-                                    </blockquote>
-
-                                </figure>
-                            </div>
-                        </div>
-                    </div>
+    <div class="service-card">
+        <div class="service-header">
+            <h5 class="service-route">
+                <i class="fas fa-bus"></i>
+                <strong>{{ object.origenDestinoTrayecto(origen) }}</strong>
+                <span class="text-muted">&rarr;</span>
+                <strong>{{ object.origenDestinoTrayecto(destino) }}</strong>
+            </h5>
+            
+            <div>
+                {% if object.asientosLibres != 0 %}
+                    <span class="service-badge-seats label label-warning">
+                        {{ object.asientosLibres }} libres
+                    </span>
+                    &nbsp;
+                    <a href="#" class="btn btn-link btn-xs" style="color: #059669; font-weight: 700; text-decoration: underline; padding: 0;" data-toggle="modal" data-target="#modal{{ object.id }}">Ver Paradas</a>
+                {% else %}
+                    <span class="service-badge-seats label label-danger">Agotado</span>
+                {% endif %}
             </div>
+        </div>
+
+        <div class="service-body">
+            <div class="time-info-block">
+                <span class="time-info-label">Salida</span>
+                <span class="time-info-value">
+                    <i class="fa fa-clock-o text-muted"></i> 
+                    {{ object.origenDestinoTrayectoHs(origen)|date('H:i') }} hs
+                </span>
+                <span class="time-info-date">
+                    <i class="fa fa-calendar-day text-muted"></i> 
+                    {{ fecha_salida|esp_date('%a %d %b') }}
+                </span>
+            </div>
+
+            <div class="time-info-block">
+                <span class="time-info-label">Llegada</span>
+                <span class="time-info-value">
+                    <i class="fa fa-clock-o text-muted"></i> 
+                    {{ object.origenDestinoTrayectoHs(destino)|date('H:i') }} hs
+                </span>
+                <span class="time-info-date">
+                    <i class="fa fa-calendar-day text-muted"></i> 
+                    {{ fecha_llegada|esp_date('%a %d %b') }}
+                </span>
+            </div>
+
+            <div class="price-info-block">
+                <span class="time-info-label">Tarifa</span>
+                {% set nuevo_precio = admin.getServicioCosto(origen, destino) %}
+                <span class="price-value">
+                    ARS {{ (nuevo_precio/100)|number_format(2, ',', '.') }}
+                </span>
+            </div>
+
+            <div class="action-block">
+                {% if is_granted('ROLE_FINAL_USER') and not is_granted('ROLE_SUPER_ADMIN') %}
+                    {% if object.asientosLibres != 0 %}
+                        <a href="{{ admin.generateObjectUrl('reserva', object,{ 'origen': origen, 'destino': destino, 'fechahora_salida': reserva_fechahora_salida, 'fechahora_llegada': reserva_fechahora_llegada}) }}" class="btn-reserve btn-block" title="{{ 'Reservar pasaje'|trans({}, 'SonataAdminBundle') }}">
+                            <i class="fas fa-ticket-alt"></i> Reservar
+                        </a>
+                    {% else %}
+                        <span class="btn-agotado btn-block"><i class="fas fa-ban"></i> Agotado</span>
+                    {% endif %}
+                {% endif %}
+                
+                {% if is_granted('ROLE_USER_BOLETO') and not is_granted('ROLE_SUPER_ADMIN') %}
+                    <a href="{{ path('admin_app_servicio_boleto_list', {'id': object.id}) }}" class="btn btn-sm btn-primary btn-block" style="background-color: #059669; border-color: #047857;">
+                        <i class="fas fa-address-card"></i> Boletos
+                    </a>
+                {% endif %}
+
+                {% if is_granted('ROLE_SUPER_ADMIN') %}
+                    <div class="btn-group-vertical btn-block" role="group">
+                        <button id="btnGroupDrop1" type="button" class="btn btn-sm btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-gear"></i> Acciones
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1" style="min-width: 100px; margin: 0; padding: 0;">
+                            <a href="{{ path('admin_app_servicio_archivo',  {'id': object.id}) }}" class="btn btn-sm btn-default btn-block">
+                                <i class="fas fa-file"></i> Archivo
+                            </a>
+                            <a href="{{ path('admin_app_servicio_boleto_list', {'id': object.id}) }}" class="btn btn-sm btn-default btn-block">
+                                <i class="fas fa-address-card"></i> Boletos
+                            </a>
+                            <a href="{{ admin.generateObjectUrl('edit', object) }}" class="btn btn-sm btn-default btn-block">
+                                <i class="fas fa-edit"></i> Editar
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
     </div>
-    </div>
-    {# modal taryecto puntos #}
+
+    {# modal trayecto puntos #}
     <div class="modal fade" id="modal{{ object.id }}" tabindex="-1" role="dialog" aria-labelledby="modal{{ object.id }}" aria-hidden="true">
         <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"><i class="fas fa-bus"></i> <strong>{{ object.trayecto.origen }}</strong> &raquo; <strong>{{ object.trayecto.destino }} </strong></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+            <div class="modal-content" style="border-radius: 12px; overflow: hidden; border: none;">
+                <div class="modal-header" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; border-bottom: none; padding: 20px;">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: #ffffff; opacity: 0.8; float: right;">
+                        <span aria-hidden="true" style="font-size: 24px;">&times;</span>
                     </button>
+                    <h4 class="modal-title" style="font-weight: 700; margin: 0;">
+                        <i class="fas fa-bus"></i> Detalle del Recorrido
+                    </h4>
                 </div>
-                <div class="modal-body">
-                    <strong class="text-primary">Salida</strong> {{ fecha_salida|esp_date('%a %d %b') }} <i class="fa fa-clock-o"></i>{{ object.origenDestinoTrayectoHs(origen)|date('H:i') }}Hs<br>
-                    <strong>{{ object.origenDestinoTrayecto(origen) }}</strong><br><br>
-                    {% for tp in object.trayecto.trayectoparadas %}
-                        <strong>Parada</strong><br>{{ tp.parada }}<br>
-                    {% endfor %}
-                    {# set fecha_llegada = object.partida|date_modify(object.origenDestinoTrayectoDias(destino)) #}
-                    <br><strong class="text-primary">Llegada</strong> {{ fecha_llegada|esp_date('%a %d %b') }} <i class="fa fa-clock-o"></i>{{ object.origenDestinoTrayectoHs(destino)|date('H:i') }}Hs<br>
-                    <strong>{{ object.origenDestinoTrayecto(destino) }}</strong>
+                <div class="modal-body" style="padding: 25px; font-size: 15px;">
+                    <div style="border-left: 3px dashed #10b981; padding-left: 20px; margin-left: 10px; position: relative;">
+                        <!-- Salida -->
+                        <div style="margin-bottom: 25px; position: relative;">
+                            <div style="width: 12px; height: 12px; border-radius: 50%; background: #10b981; position: absolute; left: -27px; top: 5px; border: 2px solid #ffffff;"></div>
+                            <span style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #10b981;">Origen / Salida</span>
+                            <h5 style="margin: 5px 0; font-weight: 700; color: #1f2937;">{{ object.origenDestinoTrayecto(origen) }}</h5>
+                            <p style="margin: 0; color: #6b7280; font-size: 13.5px;">
+                                <i class="fa fa-calendar-day"></i> {{ fecha_salida|esp_date('%a %d %b') }} &nbsp;|&nbsp; <i class="fa fa-clock-o"></i> {{ object.origenDestinoTrayectoHs(origen)|date('H:i') }} hs
+                            </p>
+                        </div>
+                        
+                        <!-- Paradas Intermedias -->
+                        {% for tp in object.trayecto.trayectoparadas %}
+                            {% if tp.parada.id != origen and tp.parada.id != destino %}
+                                <div style="margin-bottom: 25px; position: relative;">
+                                    <div style="width: 10px; height: 10px; border-radius: 50%; background: #94a3b8; position: absolute; left: -26px; top: 6px; border: 2px solid #ffffff;"></div>
+                                    <span style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #64748b;">Parada</span>
+                                    <h5 style="margin: 5px 0; font-weight: 700; color: #1f2937;">{{ tp.parada.nombre }}</h5>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+
+                        <!-- Llegada -->
+                        <div style="position: relative;">
+                            <div style="width: 12px; height: 12px; border-radius: 50%; background: #059669; position: absolute; left: -27px; top: 5px; border: 2px solid #ffffff;"></div>
+                            <span style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #059669;">Destino / Llegada</span>
+                            <h5 style="margin: 5px 0; font-weight: 700; color: #1f2937;">{{ object.origenDestinoTrayecto(destino) }}</h5>
+                            <p style="margin: 0; color: #6b7280; font-size: 13.5px;">
+                                <i class="fa fa-calendar-day"></i> {{ fecha_llegada|esp_date('%a %d %b') }} &nbsp;|&nbsp; <i class="fa fa-clock-o"></i> {{ object.origenDestinoTrayectoHs(destino)|date('H:i') }} hs
+                            </p>
+                        </div>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <div class="modal-footer" style="background: #f8fafc; border-top: 1px solid #f1f5f9;">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" style="border-radius: 6px; font-weight: 600;">Cerrar</button>
                 </div>
             </div>
         </div>
     </div>
-    {# fin modal trayectos #}
-{% endblock field %}
+{% endblock %}
