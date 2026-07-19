@@ -223,6 +223,7 @@ class MercadoPagoWebhookController extends AbstractController
                             'departure_time' => $reserva->getServicio()->getLlegada()->format('d-m-Y H:i'),
                             'company' => 'SantiagueñoBus',
                             'service_type' => 'Servicio Comun',
+                            'total_cost' => $reserva->getMontoTotal(),
                         ];
 
                         $paymentInfo = [

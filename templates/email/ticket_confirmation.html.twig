@@ -2,34 +2,168 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Confirmación de Compra de Pasaje</title>
     <style>
-        /* Estilos CSS en línea para compatibilidad con clientes de correo */
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f4; }
-        .container { width: 100%; max-width: 600px; margin: 20px auto; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; }
-        .header { background-color: #00e765; color: white; padding: 20px; text-align: center; }
-        .header h1 { margin: 0; font-size: 24px; }
-        .content { padding: 25px; }
-        .content h2 { color: #007bff; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-top: 20px; }
-        .details-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        .details-table th, .details-table td { padding: 10px; border: 1px solid #eee; text-align: left; }
-        .details-table th { background-color: #f9f9f9; }
-        .footer { background-color: #f8f8f8; padding: 20px; text-align: center; font-size: 0.9em; color: #777; border-top: 1px solid #eee; }
-        .button-wrapper { text-align: center; margin-top: 30px; margin-bottom: 20px; }
-        .button { display: inline-block; background-color: #28a745; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-size: 16px; font-weight: bold; }
-        .attention { background-color: #fff3cd; border-left: 5px solid #ffeeba; padding: 15px; margin-top: 20px; color: #856404; border-radius: 4px; }
+        /* Email client compatibility resets */
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2937;
+            margin: 0;
+            padding: 0;
+            background-color: #f3f4f6;
+            -webkit-font-smoothing: antialiased;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .container {
+            max-width: 600px;
+            margin: 30px auto;
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+        }
+        .header {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #ffffff;
+            padding: 35px 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .header p {
+            margin: 0;
+            font-size: 15px;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 35px 30px;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #059669;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #ecfdf5;
+            padding-bottom: 8px;
+        }
+        .info-table {
+            margin-bottom: 20px;
+            background-color: #f9fafb;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #f3f4f6;
+        }
+        .info-table th {
+            width: 35%;
+            padding: 12px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #6b7280;
+            text-align: left;
+            background-color: #f3f4f6;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .info-table td {
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #1f2937;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .info-table tr:last-child th,
+        .info-table tr:last-child td {
+            border-bottom: none;
+        }
+        .passenger-card {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.01);
+        }
+        .passenger-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 1px dashed #e5e7eb;
+            padding-bottom: 10px;
+        }
+        .passenger-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        .attention-box {
+            background-color: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            padding: 20px;
+            margin-top: 30px;
+            color: #78350f;
+            border-radius: 8px;
+        }
+        .attention-box strong {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #92400e;
+        }
+        .attention-box p {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .footer {
+            background-color: #f9fafb;
+            padding: 30px;
+            text-align: center;
+            font-size: 12px;
+            color: #9ca3af;
+            border-top: 1px solid #f3f4f6;
+        }
+        .footer p {
+            margin: 5px 0;
+        }
+        .badge-seat {
+            background-color: #ecfdf5;
+            color: #047857;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 13px;
+            border: 1px solid #a7f3d0;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
-        <h1>¡Tu compra ha sido exitosa, {{ buyer_name }}!</h1>
+        <h1>¡Tu pasaje está confirmado!</h1>
+        <p>Hola <strong>{{ buyer_name }}</strong>, gracias por elegir viajar con nosotros.</p>
     </div>
+    
     <div class="content">
-        <p>Gracias por comprar tu pasaje con nosotros. A continuación, encontrarás los detalles de tu viaje.</p>
+        <p style="margin-top: 0; font-size: 15px; color: #4b5563; text-align: center;">
+            Hemos registrado tu pago de forma exitosa. A continuación dispones del resumen de tu viaje.
+        </p>
 
-        <h2>Detalles de tu Pasaje:</h2>
-        <table class="details-table">
+        <div class="section-title">Detalles del Viaje</div>
+        <table class="info-table">
             <tr>
                 <th>Origen</th>
                 <td>{{ trip.origin }}</td>
@@ -40,63 +174,74 @@
             </tr>
             <tr>
                 <th>Fecha y Hora</th>
-                <td>{{ trip.departure_date|date('d/m/Y') }} a las {{ trip.departure_time|date('H:i') }}</td>
+                <td>{{ trip.departure_date|date('d/m/Y') }} a las {{ trip.departure_time|date('H:i') }} hs</td>
             </tr>
             <tr>
-                <th>Empresa de Transporte</th>
+                <th>Empresa</th>
                 <td>{{ trip.company }}</td>
             </tr>
-
             <tr>
                 <th>Servicio</th>
-                <td>{{ trip.service_type }}</td> {# Ej. "Semi Cama", "Cama", "Ejecutivo" #}
+                <td>{{ trip.service_type }}</td>
             </tr>
         </table>
 
-        <h2>Información de Pasajeros:</h2>
+        <div class="section-title">Detalle de Pasajeros y Asientos</div>
         {% for t in ticket %}
-            <table class="details-table">
-                <tr>
-                    <th>Nombre Completo</th>
-                    <td>{{ t.seat_passenger }}</td>
-                </tr>
-                <tr>
-                    <th>DNI/Identificación</th>
-                    <td>{{ t.seat_dni }}</td>
-                </tr>
-                <tr>
-                    <th>Número de Asiento</th>
-                    <td>{{ t.seat_number }}</td>
-                </tr>
-                {#  <div class="button-wrapper">
-                    <a href="{{ ticket.download_link }}" class="button">Descargar tu Pasaje (PDF)</a>
-                </div>#}
-            </table>
+            <div class="passenger-card">
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="width: 70%; vertical-align: middle;">
+                            <div style="font-size: 12px; text-transform: uppercase; color: #9ca3af; font-weight: bold; margin-bottom: 2px;">Pasajero</div>
+                            <div style="font-size: 15px; font-weight: 700; color: #1f2937;">{{ t.seat_passenger }}</div>
+                            <div style="font-size: 13px; color: #6b7280; margin-top: 4px;">DNI: {{ t.seat_dni }}</div>
+                        </td>
+                        <td style="width: 30%; text-align: right; vertical-align: middle;">
+                            <div style="font-size: 11px; text-transform: uppercase; color: #9ca3af; font-weight: bold; margin-bottom: 5px;">Asiento</div>
+                            <span class="badge-seat">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" style="display: inline-block; vertical-align: middle; fill: currentColor; margin-right: 4px; margin-top: -2px;">
+                                    <rect x="8" y="2" width="8" height="3.5" rx="1" />
+                                    <path d="M7,6.5 C7,6 7.5,5.5 8,5.5 h8 c0.5,0 1,0.5 1,1 v8.5 H7 V6.5 Z" />
+                                    <rect x="5" y="15.5" width="14" height="5.5" rx="2" />
+                                </svg>
+                                {{ t.seat_number }}
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
         {% endfor %}
-        <h2>Detalles de Pago:</h2>
-        <table class="details-table">
+
+        <div class="section-title">Detalles del Pago</div>
+        <table class="info-table">
             <tr>
-                <th>Monto Abonado por Mercado Pago</th>
-                <td>$ {{ payment.amount|number_format(2, ',', '.') }}</td>
+                <th>Monto Total del Pasaje</th>
+                <td>$ {{ (trip.total_cost|default(object.montoTotal|default(0))/100)|number_format(2, ',', '.') }}</td>
+            </tr>
+            <tr>
+                <th>Monto Abonado por MP</th>
+                <td style="color: #059669; font-weight: 700;">$ {{ payment.amount|number_format(2, ',', '.') }}</td>
             </tr>
             <tr>
                 <th>Método de Pago</th>
                 <td>{{ payment.method }}</td>
             </tr>
             <tr>
-                <th>ID de Transacción Mercado Pago</th>
-                <td>{{ payment.transaction_id }}</td>
+                <th>ID Transacción</th>
+                <td style="font-family: monospace; font-size: 13px; color: #4b5563;">{{ payment.transaction_id }}</td>
             </tr>
         </table>
 
-        <div class="attention">
-            <strong>Importante:</strong> Presenta tu DNI/identificación en el momento de abordar. ¡Buen viaje!
+        <div class="attention-box">
+            <strong>Requisitos de Embarque:</strong>
+            <p>Es obligatorio presentarse 15 minutos antes de la partida y exhibir el DNI/identificación cargado en el boleto al momento de abordar el colectivo. ¡Te deseamos un excelente viaje!</p>
         </div>
-
-        <p>Si tienes alguna pregunta, no dudes en contactarnos.</p>
     </div>
+    
     <div class="footer">
-        <p>&copy; {{ "now"|date("Y") }} Tu Empresa de Pasajes El Santiagueño Bus. Todos los derechos reservados.</p>
+        <p style="font-weight: 700; color: #4b5563; font-size: 13px; margin-bottom: 10px;">El Santiagueño Bus</p>
+        <p>&copy; {{ "now"|date("Y") }} El Santiagueño Bus. Todos los derechos reservados.</p>
+        <p>Este es un correo automático, por favor no respondas a este mensaje.</p>
     </div>
 </div>
 </body>

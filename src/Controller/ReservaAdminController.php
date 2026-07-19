@@ -354,13 +354,14 @@ EOF;
                         $buyerName = $usuario->getUsername();
                     }
 
-                    $tripData = [
+                     $tripData = [
                         'origin' => $reserva->getOrigen(),
                         'destination' => $reserva->getDestino(),
                         'departure_date' => $reserva->getServicio()->getPartida()->format('d-m-Y H:i'),
                         'departure_time' => $reserva->getServicio()->getLlegada()->format('d-m-Y H:i'),
                         'company' => 'SantiagueñoBus',
                         'service_type' => 'Servicio Comun',
+                        'total_cost' => $reserva->getMontoTotal(),
                     ];
 
                     $transactionAmount = ($pago ? $pago->getImporteRecibido() : ($reserva->calcularMontoTotal() * 0.1)) / 100;
