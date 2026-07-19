@@ -10,6 +10,10 @@ sonata_admin:
   title: 'SantiagueñoBus'
   title_logo: images/bus.png
 
+  assets:
+    extra_stylesheets:
+      - 'css/custom.css'
+
   show_mosaic_button:   false
 
   security:

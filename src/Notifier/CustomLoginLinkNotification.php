@@ -21,7 +21,7 @@ class CustomLoginLinkNotification extends LoginLinkNotification
         $email = $emailMessage->getMessage();
         $email->content($this->getDefaultContentEs("el botón de abajo"))
               ->action('Ingresar', $this->link_details->getUrl());
-        #$email->htmlTemplate('emails/custom_login_link_email.html.twig');
+        $email->htmlTemplate('emails/custom_login_link_email.html.twig');
 
         return $emailMessage;
     }
