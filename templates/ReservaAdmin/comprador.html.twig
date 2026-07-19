@@ -1,5 +1,123 @@
 {% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
 
 {% block field %}
+    <style>
+        @media (max-width: 767px) {
+            /* Hide default table headers */
+            .sonata-ba-list table.table > thead {
+                display: none !important;
+            }
+            
+            /* Make table structures display as blocks */
+            .sonata-ba-list table.table,
+            .sonata-ba-list table.table > tbody,
+            .sonata-ba-list table.table > tbody > tr,
+            .sonata-ba-list table.table > tbody > tr > td {
+                display: block !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            
+            /* Remove horizontal scrolling from container */
+            .table-responsive {
+                border: none !important;
+                overflow-x: hidden !important;
+            }
+            
+            .box-body.no-padding {
+                padding: 10px !important;
+            }
+            
+            /* Convert each row into a premium card */
+            .sonata-ba-list table.table > tbody > tr {
+                background: #ffffff !important;
+                border: 1px solid #e2e8f0 !important;
+                border-left: 4px solid #10b981 !important; /* Green Accent border */
+                border-radius: 12px !important;
+                padding: 14px !important;
+                margin-bottom: 16px !important;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
+            }
+            
+            /* Style each cell */
+            .sonata-ba-list table.table > tbody > tr > td {
+                border: none !important;
+                padding: 6px 0 !important;
+                text-align: left !important;
+                font-size: 13px !important;
+            }
+            
+            /* Add field labels using pseudo-elements */
+            .sonata-ba-list-field-user::before {
+                content: "Comprador: ";
+                font-weight: 700;
+                color: #047857;
+            }
+            
+            .sonata-ba-list-field-fechaCompra::before {
+                content: "Fecha de Compra: ";
+                font-weight: 700;
+                color: #64748b;
+            }
+            
+            .sonata-ba-list-field-montoTotal::before {
+                content: "Monto Total: ";
+                font-weight: 700;
+                color: #64748b;
+            }
+            
+            .sonata-ba-list-field-detalleViaje::before {
+                content: "Detalle del Viaje: ";
+                font-weight: 700;
+                color: #64748b;
+                display: block;
+                margin-bottom: 4px;
+            }
+            
+            .sonata-ba-list-field-estado::before {
+                content: "Estado: ";
+                font-weight: 700;
+                color: #64748b;
+            }
+            
+            .sonata-ba-list-field-boletos::before {
+                content: "Pasajeros / Asientos: ";
+                font-weight: 700;
+                color: #64748b;
+            }
+            
+            .sonata-ba-list-field-payment_id::before {
+                content: "ID Pago MP: ";
+                font-weight: 700;
+                color: #64748b;
+            }
+            
+            /* Style action column differently */
+            .sonata-ba-list-field-_action {
+                border-top: 1px solid #e2e8f0 !important;
+                margin-top: 10px !important;
+                padding-top: 10px !important;
+            }
+            
+            .sonata-ba-list-field-_action::before {
+                content: "Acciones:";
+                font-weight: 700;
+                color: #64748b;
+                display: block;
+                margin-bottom: 8px;
+            }
+            
+            /* Make actions button group look cohesive */
+            .sonata-ba-list-field-_action .btn-group {
+                display: flex !important;
+                gap: 8px;
+            }
+            
+            .sonata-ba-list-field-_action .btn {
+                flex: 1 !important;
+                text-align: center !important;
+            }
+        }
+    </style>
     {{ object.user ? object.user|comprador_nombre : 'Sin comprador' }}
 {% endblock field %}

@@ -10,7 +10,7 @@
         <!-- Bootstrap CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet" />
         <!-- Google Fonts -->
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Titan+One&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
         <style>
             body {
@@ -53,19 +53,92 @@
                 color: #ffffff;
             }
 
-            .hero-text h1 {
-                font-size: 2.8rem;
-                font-weight: 800;
-                line-height: 1.2;
+            .brand-container-inline {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                margin-bottom: 15px;
+            }
+
+            .brand-logo-horse {
+                height: 70px;
+                width: auto;
+                filter: drop-shadow(2px 2px 0px rgba(0, 0, 0, 0.4));
+                animation: float 4s ease-in-out infinite;
+            }
+
+            @keyframes float {
+                0% { transform: translateY(0px) rotate(0deg); }
+                50% { transform: translateY(-4px) rotate(-1.5deg); }
+                100% { transform: translateY(0px) rotate(0deg); }
+            }
+
+            .brand-title {
+                font-family: 'Titan One', sans-serif;
+                font-size: 3.2rem;
+                font-weight: normal;
+                font-style: italic;
+                text-transform: uppercase;
+                color: #ff7849; /* Naranja Sunset */
+                letter-spacing: -1.5px;
+                line-height: 1.0;
+                margin: 0;
+                /* White outline + dark green shadow offset */
+                text-shadow: 
+                    -2px -2px 0 #fff,  
+                     2px -2px 0 #fff,
+                    -2px  2px 0 #fff,
+                     2px  2px 0 #fff,
+                    -2px  0px 0 #fff,
+                     2px  0px 0 #fff,
+                     0px -2px 0 #fff,
+                     0px  2px 0 #fff,
+                     1px  1px 0 #fff,
+                    -1px -1px 0 #fff,
+                     1px -1px 0 #fff,
+                    -1px  1px 0 #fff,
+                     4px  4px 0px #064e3b,
+                     5px  5px 0px #064e3b;
+            }
+
+            .brand-subtitle {
+                font-size: 1.4rem;
+                font-weight: 700;
                 margin-bottom: 20px;
-                letter-spacing: -1px;
+                color: #a7f3d0; /* Original emerald-100 green */
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
             }
 
             .hero-text p {
                 font-size: 1.2rem;
-                opacity: 0.9;
+                opacity: 0.95;
                 margin-bottom: 30px;
                 line-height: 1.6;
+            }
+
+            @media (max-width: 767px) {
+                .brand-container-inline {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 10px;
+                }
+                .brand-logo-horse {
+                    height: 50px;
+                }
+                .brand-title {
+                    font-size: 2.0rem;
+                    letter-spacing: -1px;
+                    text-shadow: 
+                        -1.5px -1.5px 0 #fff,  
+                         1.5px -1.5px 0 #fff,
+                        -1.5px  1.5px 0 #fff,
+                         1.5px  1.5px 0 #fff,
+                         2.5px  2.5px 0px #064e3b,
+                         3px  3px 0px #064e3b;
+                }
+                .brand-subtitle {
+                    font-size: 1.1rem;
+                }
             }
 
             /* Tarjeta de Confirmación */
@@ -268,7 +341,11 @@
     <div class="hero-section">
         <div class="hero-container">
             <div class="hero-text">
-                <h1>Viajá de Forma Inteligente y Segura</h1>
+                <div class="brand-container-inline">
+                    <img src="{{ asset('images/caballo_santi.png') }}" class="brand-logo-horse" alt="Santiagueño Bus Caballo" />
+                    <h1 class="brand-title">Santiagueño Bus</h1>
+                </div>
+                <p class="brand-subtitle">Viajá de Forma Inteligente y Segura</p>
                 <p>Gestioná tus pasajes corporativos y personales de forma ágil desde nuestro nuevo portal de autogestión. Confort y puntualidad garantizados para tus viajes en Santiago del Estero.</p>
             </div>
             
@@ -380,7 +457,7 @@
 
     <!-- Pie de página -->
     <footer>
-        <p style="font-weight: 700; color: #ffffff; margin-bottom: 10px;">Santiagueño Bus</p>
+        <p style="font-family: 'Titan One', sans-serif; font-size: 1.5rem; font-style: italic; color: #ff7849; text-transform: uppercase; margin-bottom: 10px; letter-spacing: -0.5px; -webkit-text-stroke: 0.5px #fff; text-shadow: 1px 1px 0px #064e3b;">Santiagueño Bus</p>
         <p>&copy; {{ "now"|date("Y") }} Santiagueño Bus - Todos los derechos reservados.</p>
     </footer>
 
