@@ -256,3 +256,36 @@
     text-decoration: none !important;
     display: inline-block;
 }
+
+/* Fix mobile horizontal scrolling on the service list */
+@media (max-width: 767px) {
+    .sonata-ba-list table.table {
+        display: block !important;
+        width: 100% !important;
+        overflow-x: hidden !important;
+        border: none !important;
+    }
+    
+    .sonata-ba-list table.table > thead {
+        display: none !important;
+    }
+    
+    .sonata-ba-list table.table > tbody,
+    .sonata-ba-list table.table > tbody > tr,
+    .sonata-ba-list table.table > tbody > tr > td {
+        display: block !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        border: none !important;
+        padding: 0 !important;
+    }
+
+    .table-responsive {
+        border: none !important;
+        overflow-x: hidden !important;
+    }
+    
+    .box-body.no-padding {
+        padding: 10px !important;
+    }
+}
