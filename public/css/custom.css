@@ -286,36 +286,13 @@
 
 /* Fix mobile horizontal scrolling on the service list */
 @media (max-width: 767px) {
-    .sonata-ba-list table.table {
-        display: block !important;
-        width: 100% !important;
-        overflow-x: hidden !important;
-        border: none !important;
-    }
-    
-    .sonata-ba-list table.table > thead {
-        display: none !important;
-    }
-    
-    .sonata-ba-list table.table > tbody,
-    .sonata-ba-list table.table > tbody > tr,
-    .sonata-ba-list table.table > tbody > tr > td {
-        display: block !important;
-        width: 100% !important;
-        box-sizing: border-box !important;
-        border: none !important;
-        padding: 0 !important;
-    }
-
     .table-responsive {
+        width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
         border: none !important;
-        overflow-x: hidden !important;
     }
     
-    .box-body.no-padding {
-        padding: 10px !important;
-    }
-
     .service-card {
         padding: 12px !important;
         margin-left: 0 !important;
