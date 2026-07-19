@@ -48,7 +48,7 @@
 /* Treeview Submenus */
 .sidebar-menu > li > .treeview-menu {
     background-color: #022c22 !important; /* Darkest Emerald */
-    padding: 4px 0 !important;
+    padding: 0 !important;
     border: none !important;
     box-shadow: none !important;
 }
