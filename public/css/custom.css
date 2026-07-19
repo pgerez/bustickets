@@ -50,16 +50,18 @@
     background-color: #022c22 !important; /* Darkest Emerald */
     padding: 4px 0 !important;
     border: none !important;
+    box-shadow: none !important;
 }
 
-.treeview-menu > li {
+.sidebar-menu .treeview-menu > li {
     border-top: none !important;
     border-bottom: none !important;
     border-left: none !important;
     border-right: none !important;
+    box-shadow: none !important;
 }
 
-.treeview-menu > li > a {
+.sidebar-menu .treeview-menu > li > a {
     color: #a7f3d0 !important; /* Soft Green Mint */
     padding: 8px 5px 8px 20px !important;
     font-size: 13px !important;
@@ -70,8 +72,8 @@
     box-shadow: none !important;
 }
 
-.treeview-menu > li > a:hover, 
-.treeview-menu > li.active > a {
+.sidebar-menu .treeview-menu > li > a:hover, 
+.sidebar-menu .treeview-menu > li.active > a {
     color: #ffffff !important;
     background-color: #047857 !important;
     border-top: none !important;
