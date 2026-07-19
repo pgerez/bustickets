@@ -211,6 +211,55 @@
                 font-size: 0.9rem;
                 border-top: 1px solid #047857;
             }
+
+            /* Spinner / Bus Loader Overlay */
+            .spinner-overlay {
+                position: fixed;
+                top: 0; left: 0; right: 0; bottom: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(17, 24, 39, 0.6);
+                z-index: 9999;
+            }
+
+            .spinner-container {
+                text-align: center;
+                background: #ffffff;
+                padding: 30px;
+                border-radius: 12px;
+                box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+            }
+
+            .bus-loader-container {
+                position: relative;
+                margin: 0 auto 15px;
+                width: 80px;
+                text-align: center;
+            }
+
+            .bus-icon {
+                display: inline-block;
+                animation: drive-wiggle 0.3s ease-in-out infinite;
+            }
+
+            .road-line {
+                width: 100%;
+                height: 3px;
+                background: repeating-linear-gradient(90deg, #10b981 0px, #10b981 8px, transparent 8px, transparent 16px);
+                animation: move-road 0.5s linear infinite;
+                margin-top: 4px;
+            }
+
+            @keyframes drive-wiggle {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-3px); }
+            }
+
+            @keyframes move-road {
+                0% { background-position: 16px 0; }
+                100% { background-position: 0 0; }
+            }
         </style>
     </head>
     <body>
@@ -247,7 +296,17 @@
     <!-- Spinner Overlay -->
     <div class="spinner-overlay" style="display: none;">
         <div class="spinner-container">
-            <div class="spinner"></div>
+            <div class="bus-loader-container">
+                <div class="bus-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="none" viewBox="0 0 24 24" stroke="#10b981" stroke-width="1.5">
+                        <rect x="3" y="4" width="18" height="12" rx="2" stroke-linejoin="round" />
+                        <circle cx="7.5" cy="18.5" r="2.5" />
+                        <circle cx="16.5" cy="18.5" r="2.5" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 10h2v2h-2zm-10 0h2v2H6zm5 0h2v2h-2zm5-4h2v2h-2zm-10 0h2v2H6zm5 0h2v2h-2z" />
+                    </svg>
+                </div>
+                <div class="road-line"></div>
+            </div>
             <p style="font-weight: 600; color: #374151; margin: 0;">Iniciando sesión, por favor espere...</p>
         </div>
     </div>
