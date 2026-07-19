@@ -90,3 +90,8 @@
     background-color: #022c22 !important;
     color: #a7f3d0 !important;
 }
+
+/* Box headers / blue border top to green */
+.box.box-primary {
+    border-top-color: #10b981 !important;
+}
