@@ -116,19 +116,33 @@
     border-top-color: #10b981 !important;
 }
 
-/* Filter button and form elements */
+/* Filter buttons, primary buttons, and info buttons to green */
 .sonata-ba-filter-form button[type="submit"],
-.sonata-ba-filter-form .btn-primary {
+.sonata-ba-filter-form .btn-primary,
+.sonata-bc .btn-primary,
+.sonata-bc .btn-info,
+.sonata-actions .btn-primary,
+.sonata-actions .btn-info,
+.sonata-ba-action {
     background-color: #10b981 !important;
     border-color: #059669 !important;
     color: #ffffff !important;
 }
 
 .sonata-ba-filter-form button[type="submit"]:hover,
-.sonata-ba-filter-form .btn-primary:hover {
+.sonata-ba-filter-form .btn-primary:hover,
+.sonata-bc .btn-primary:hover,
+.sonata-bc .btn-info:hover,
+.sonata-actions .btn-primary:hover,
+.sonata-actions .btn-info:hover,
+.sonata-ba-action:hover,
+.sonata-bc .btn-primary:focus,
+.sonata-bc .btn-info:focus {
     background-color: #059669 !important;
     border-color: #047857 !important;
+    color: #ffffff !important;
 }
+
 
 /* Service Card Style for Final User */
 .service-card {
@@ -330,4 +344,11 @@
         box-sizing: border-box !important;
         margin-top: 10px !important;
     }
+}
+
+/* Custom background for AdminLTE/Sonata info box bg-aqua to match green theme */
+.sonata-bc .bg-aqua,
+.sonata-bc .info-box-icon.bg-aqua {
+    background-color: #10b981 !important;
+    color: #ffffff !important;
 }
