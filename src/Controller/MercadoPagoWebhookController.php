@@ -435,7 +435,7 @@ class MercadoPagoWebhookController extends AbstractController
                 $message = '¡Tu pago ha sido aprobado! ID de la transacción: ' . ($effectivePaymentId ?? 'N/A');
                 break;
             case 'rejected':
-                $message = 'Tu pago fue rechazado. Intenta de nuevo o prueba with otro medio de pago.';
+                $message = 'Tu pago fue rechazado. Intenta de nuevo o prueba con otro medio de pago.';
                 break;
             case 'pending':
             case 'in_process':
