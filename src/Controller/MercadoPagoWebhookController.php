@@ -276,36 +276,75 @@ class MercadoPagoWebhookController extends AbstractController
         $status = $request->query->get('status'); // Estado general
         $externalReference = $request->query->get('external_reference'); // Tu referencia externa si la enviaste
         $preferenceId = $request->query->get('preference_id');
-        ##actulizo payment_id####
-        $reserva = $entityManager->getRepository(Reserva::class)->findOneBy(['preference_id' => $preferenceId]);
-        foreach ($reserva->getBoletos() as $boleto):
-            $b = $boleto->getAsiento().'<br>';
-        endforeach;
-        #$reserva->setPaymentId($paymentId);
-        #$entityManager->persist($reserva);
-        #$entityManager->flush();
-        // Puedes agregar más parámetros según tus necesidades, como:
         $paymentType = $request->query->get('payment_type');
-        $merchantOrderId = $request->query->get('merchant_order_id');
-        $siteId = $request->query->get('site_id');
-        $processingMode = $request->query->get('processing_mode');
-        $merchantAccountId = $request->query->get('merchant_account_id');
+
+        $effectiveStatus = $collectionStatus ?: $status;
+        $effectivePaymentId = $paymentId ?: $collectionId;
+
+        $reservaRepo = $entityManager->getRepository(Reserva::class);
+        $reserva = null;
+        if ($preferenceId) {
+            $reserva = $reservaRepo->findOneBy(['preference_id' => $preferenceId]);
+        }
+        if (!$reserva && $externalReference) {
+            $parts = explode('_', (string)$externalReference);
+            if (count($parts) >= 2 && $parts[0] === 'reserva') {
+                $idReserva = (int)$parts[1];
+                $reserva = $reservaRepo->find($idReserva);
+            }
+        }
+
+        $b = '';
+        if ($reserva) {
+            foreach ($reserva->getBoletos() as $boleto) {
+                $asientoObj = $boleto->getAsiento();
+                $asientoNum = $asientoObj ? $asientoObj->getNumero() : '';
+                $b .= $asientoNum . '<br>';
+            }
+
+            if ($effectiveStatus === 'approved' || $effectiveStatus === 'authorized') {
+                if ($reserva->getEstado() !== Reserva::STATE_COMPLETED) {
+                    $reserva->setEstado(Reserva::STATE_COMPLETED);
+                    if ($effectivePaymentId) {
+                        $reserva->setPaymentId((string)$effectivePaymentId);
+                    }
+
+                    $pago = $reserva->getPagos()->last();
+                    if ($pago) {
+                        if ($effectivePaymentId) {
+                            $pago->setNumeroComprobante((string)$effectivePaymentId);
+                        }
+                        if ($paymentType) {
+                            $pago->setObservacion((string)$paymentType);
+                        }
+                        $entityManager->persist($pago);
+                    }
+
+                    foreach ($reserva->getBoletos() as $boleto) {
+                        $boleto->setEstado(Boleto::STATE_RESERVED);
+                        $entityManager->persist($boleto);
+                    }
+
+                    $entityManager->persist($reserva);
+                    $entityManager->flush();
+                    $logger->info("MercadoPago backUrl: Reserva {$reserva->getId()} confirmada y boletos actualizados a STATE_RESERVED.");
+                }
+            }
+        }
 
         // Lógica de tu aplicación basada en el estado del pago
         $message = '';
-        switch ($collectionStatus) {
+        switch ($effectiveStatus) {
             case 'approved':
-                $message = '¡Tu pago ha sido aprobado! ID de la transacción: ' . $paymentId;
-                // Aquí podrías redirigir a una página de "Gracias por tu compra"
-                // O iniciar alguna lógica de actualización si no tienes webhooks confiables
+            case 'authorized':
+                $message = '¡Tu pago ha sido aprobado! ID de la transacción: ' . ($effectivePaymentId ?? 'N/A');
                 break;
             case 'rejected':
                 $message = 'Tu pago fue rechazado. Intenta de nuevo o prueba con otro medio de pago.';
-                // Aquí podrías redirigir a una página de "Pago rechazado"
                 break;
             case 'pending':
+            case 'in_process':
                 $message = 'Tu pago está pendiente. Esperando confirmación.';
-                // Aquí podrías redirigir a una página de "Pago pendiente"
                 break;
             default:
                 $message = 'Estado de pago desconocido o no especificado.';
@@ -313,7 +352,7 @@ class MercadoPagoWebhookController extends AbstractController
         }
 
         $logger->info('Lógica de retorno de Mercado Pago ejecutada.', [
-            'collection_status' => $collectionStatus,
+            'collection_status' => $effectiveStatus,
             'external_reference' => $externalReference,
             'message_to_user' => $message,
             'boletos' => $b,
@@ -321,15 +360,12 @@ class MercadoPagoWebhookController extends AbstractController
 
         return $this->render('ReservaAdmin/pasajero_summary.html.twig', [
             'mensaje' => $message,
-            'collectionId' => $collectionId,
+            'collectionId' => $effectivePaymentId,
             'externalReference' => $externalReference,
             'boletos' => $b,
             'reserva' => $reserva
         ]);
-
     }
-
-
 
     #[Route('/mercadopago/return', name: 'mercadopago_return', methods: ['GET'])]
     public function returnUrl(Request $request, EntityManagerInterface $entityManager, LoggerInterface $logger): Response
@@ -341,39 +377,69 @@ class MercadoPagoWebhookController extends AbstractController
         // Obtener los parámetros relevantes
         $collectionId = $request->query->get('collection_id');
         $collectionStatus = $request->query->get('collection_status');
-        $paymentId = $request->query->get('payment_id'); // A menudo es lo mismo que collection_id
-        $status = $request->query->get('status'); // Estado general
-        $externalReference = $request->query->get('external_reference'); // Tu referencia externa si la enviaste
+        $paymentId = $request->query->get('payment_id');
+        $status = $request->query->get('status');
+        $externalReference = $request->query->get('external_reference');
         $preferenceId = $request->query->get('preference_id');
-        ##actulizo payment_id####
-        $reserva = $entityManager->getRepository(Reserva::class)->findOneBy(['preference_id' => $preferenceId]);
-        if ($reserva) {
-            $reserva->setPaymentId($paymentId);
-            $entityManager->persist($reserva);
-            $entityManager->flush();
-        }
-        // Puedes agregar más parámetros según tus necesidades, como:
         $paymentType = $request->query->get('payment_type');
-        $merchantOrderId = $request->query->get('merchant_order_id');
-        $siteId = $request->query->get('site_id');
-        $processingMode = $request->query->get('processing_mode');
-        $merchantAccountId = $request->query->get('merchant_account_id');
 
-        // Lógica de tu aplicación basada en el estado del pago
+        $effectiveStatus = $collectionStatus ?: $status;
+        $effectivePaymentId = $paymentId ?: $collectionId;
+
+        $reservaRepo = $entityManager->getRepository(Reserva::class);
+        $reserva = null;
+        if ($preferenceId) {
+            $reserva = $reservaRepo->findOneBy(['preference_id' => $preferenceId]);
+        }
+        if (!$reserva && $externalReference) {
+            $parts = explode('_', (string)$externalReference);
+            if (count($parts) >= 2 && $parts[0] === 'reserva') {
+                $idReserva = (int)$parts[1];
+                $reserva = $reservaRepo->find($idReserva);
+            }
+        }
+
+        if ($reserva && ($effectiveStatus === 'approved' || $effectiveStatus === 'authorized')) {
+            if ($reserva->getEstado() !== Reserva::STATE_COMPLETED) {
+                $reserva->setEstado(Reserva::STATE_COMPLETED);
+                if ($effectivePaymentId) {
+                    $reserva->setPaymentId((string)$effectivePaymentId);
+                }
+
+                $pago = $reserva->getPagos()->last();
+                if ($pago) {
+                    if ($effectivePaymentId) {
+                        $pago->setNumeroComprobante((string)$effectivePaymentId);
+                    }
+                    if ($paymentType) {
+                        $pago->setObservacion((string)$paymentType);
+                    }
+                    $entityManager->persist($pago);
+                }
+
+                foreach ($reserva->getBoletos() as $boleto) {
+                    $boleto->setEstado(Boleto::STATE_RESERVED);
+                    $entityManager->persist($boleto);
+                }
+
+                $entityManager->persist($reserva);
+                $entityManager->flush();
+                $logger->info("MercadoPago returnUrl: Reserva {$reserva->getId()} confirmada y boletos actualizados a STATE_RESERVED.");
+            }
+        }
+
         $message = '';
-        switch ($collectionStatus) {
+        switch ($effectiveStatus) {
             case 'approved':
-                $message = '¡Tu pago ha sido aprobado! ID de la transacción: ' . $paymentId;
-                // Aquí podrías redirigir a una página de "Gracias por tu compra"
-                // O iniciar alguna lógica de actualización si no tienes webhooks confiables
+            case 'authorized':
+                $message = '¡Tu pago ha sido aprobado! ID de la transacción: ' . ($effectivePaymentId ?? 'N/A');
                 break;
             case 'rejected':
-                $message = 'Tu pago fue rechazado. Intenta de nuevo o prueba con otro medio de pago.';
-                // Aquí podrías redirigir a una página de "Pago rechazado"
+                $message = 'Tu pago fue rechazado. Intenta de nuevo o prueba with otro medio de pago.';
                 break;
             case 'pending':
+            case 'in_process':
                 $message = 'Tu pago está pendiente. Esperando confirmación.';
-                // Aquí podrías redirigir a una página de "Pago pendiente"
                 break;
             default:
                 $message = 'Estado de pago desconocido o no especificado.';
@@ -381,7 +447,7 @@ class MercadoPagoWebhookController extends AbstractController
         }
 
         $logger->info('Lógica de retorno de Mercado Pago ejecutada.', [
-            'collection_status' => $collectionStatus,
+            'collection_status' => $effectiveStatus,
             'external_reference' => $externalReference,
             'message_to_user' => $message,
         ]);
@@ -390,7 +456,7 @@ class MercadoPagoWebhookController extends AbstractController
             sprintf(
                 '<html><body><h1>Estado de tu pago</h1><p>%s</p><p>ID de la colección: %s</p><p>Referencia Externa: %s</p><p>Puedes regresar a la página principal haciendo clic <a href="/">aquí</a>.</p></body></html>',
                 $message,
-                $collectionId ?? 'N/A', // Usar el operador null coalescing para valores que podrían ser nulos
+                $effectivePaymentId ?? 'N/A',
                 $externalReference ?? 'N/A'
             )
         );
