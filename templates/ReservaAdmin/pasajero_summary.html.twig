@@ -216,31 +216,32 @@
 
 <div class="container-fluid" style="padding-top: 20px; max-width: 960px; margin: 0 auto;">
 
-    {% if mensaje is defined and mensaje is not empty %}
-        {% if reserva is defined and reserva and (reserva.estado == 4 or 'aprobado' in mensaje|lower) %}
-            <div class="alert alert-success" style="border-radius: 10px; margin-bottom: 25px; padding: 15px 20px; font-weight: 600; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 6px rgba(16,185,129,0.15);">
-                <i class="fa fa-check-circle fa-lg"></i>
-                <div>{{ mensaje }}</div>
-            </div>
-        {% elseif reserva is defined and reserva and (reserva.estado == 2 or 'pendiente' in mensaje|lower) %}
-            <div class="alert alert-warning" style="border-radius: 10px; margin-bottom: 25px; padding: 15px 20px; font-weight: 600; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 6px rgba(245,158,11,0.15);">
-                <i class="fa fa-exclamation-triangle fa-lg"></i>
-                <div>{{ mensaje }}</div>
-            </div>
-        {% else %}
-            <div class="alert alert-danger" style="border-radius: 10px; margin-bottom: 25px; padding: 15px 20px; font-weight: 600; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 6px rgba(239,68,68,0.15);">
-                <i class="fa fa-times-circle fa-lg"></i>
-                <div>{{ mensaje }}</div>
-            </div>
-        {% endif %}
-    {% endif %}
-
     {% if reserva is defined and reserva is not null %}
-        {% set is_approved = (reserva.estado == 4 or 'aprobado' in mensaje|default('')|lower) %}
-        {% set is_pending = (reserva.estado == 2 or 'pendiente' in mensaje|default('')|lower) %}
+        {% set is_approved = (reserva.estado == 2 or 'aprobado' in mensaje|default('')|lower) %}
+        {% set is_pending = (reserva.estado == 1 or ('pendiente' in mensaje|default('')|lower and not is_approved)) %}
+
         {% set card_class = is_approved ? 'approved' : (is_pending ? 'pending' : 'rejected') %}
         {% set badge_class = is_approved ? 'status-badge status-success' : (is_pending ? 'status-badge status-warning' : 'status-badge status-danger') %}
         {% set status_label = is_approved ? 'Pago Aprobado' : (is_pending ? 'Pendiente de Pago' : 'Pago Rechazado') %}
+
+        {% if mensaje is defined and mensaje is not empty %}
+            {% if is_approved %}
+                <div class="alert alert-success" style="border-radius: 10px; margin-bottom: 25px; padding: 15px 20px; font-weight: 600; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 6px rgba(16,185,129,0.15);">
+                    <i class="fa fa-check-circle fa-lg"></i>
+                    <div>{{ mensaje }}</div>
+                </div>
+            {% elseif is_pending %}
+                <div class="alert alert-warning" style="border-radius: 10px; margin-bottom: 25px; padding: 15px 20px; font-weight: 600; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 6px rgba(245,158,11,0.15);">
+                    <i class="fa fa-exclamation-triangle fa-lg"></i>
+                    <div>{{ mensaje }}</div>
+                </div>
+            {% else %}
+                <div class="alert alert-danger" style="border-radius: 10px; margin-bottom: 25px; padding: 15px 20px; font-weight: 600; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 6px rgba(239,68,68,0.15);">
+                    <i class="fa fa-times-circle fa-lg"></i>
+                    <div>{{ mensaje }}</div>
+                </div>
+            {% endif %}
+        {% endif %}
 
         <div class="reserva-card {{ card_class }}">
             <div class="reserva-header">
@@ -300,7 +301,7 @@
                                 {% endif %}
                             </td>
                             <td style="text-align: right;">
-                                {% if reserva.estado == 2 or is_pending %}
+                                {% if reserva.estado == 1 %}
                                     <a href="{{ path('admin_app_reserva_edit', {'id': reserva.id}) }}" class="btn btn-sm btn-warning" style="font-weight: 600; border-radius: 6px;">
                                         <i class="fa fa-credit-card"></i> Completar compra
                                     </a>
