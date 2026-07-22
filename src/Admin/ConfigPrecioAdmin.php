@@ -37,7 +37,7 @@ final class ConfigPrecioAdmin extends AbstractAdmin
     protected function configureListFields(ListMapper $list): void
     {
         $number_transformer = new MoneyToLocalizedStringTransformer(
-            2, true, \NumberFormatter::ROUND_HALFUP, 100, 'es_AR');
+            2, true, \NumberFormatter::ROUND_HALFUP, 100, extension_loaded('intl') ? 'es_AR' : 'en');
         $categorias = ConfigPrecio::getCategorias();
 
         $list

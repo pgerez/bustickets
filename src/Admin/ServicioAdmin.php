@@ -263,9 +263,9 @@ final class ServicioAdmin extends AbstractAdmin
     {
         $actions = [
             #'show' => [],
+            'reserva' => ['template' => 'ServicioAdmin/reserva_list_btn.html.twig'],
             'edit' => [],
             'delete' => [],
-            #'reserva' => ['template' => 'ServicioAdmin/reserva_list_btn.html.twig'],
             #'asientos' => ['template' => 'ServicioAdmin/asientos_ocupacion.html.twig'],
             'archivo' => ['template' => 'ServicioAdmin/archivo.html.twig'],
             'boletos'  => ['template' => 'ServicioAdmin/boletos.html.twig'],

@@ -85,16 +85,33 @@ final class ServicioAdminController extends CRUDController
         EntityManagerInterface $entityManager, Request $request
     ): RedirectResponse
     {
+        $servicio = $this->admin->getSubject();
+        $trayecto = $servicio ? $servicio->getTrayecto() : null;
+
         $o = $request->get('origen');
         $d = $request->get('destino');
-        $fecha_salida = \DateTime::createFromFormat('Y-m-d H:i', $request->get('fechahora_salida'));;
-        $fecha_llegada = \DateTime::createFromFormat('Y-m-d H:i',$request->get('fechahora_llegada'));
-        $origen = $entityManager->getRepository(Parada::class)->find($o);
-        $destino = $entityManager->getRepository(Parada::class)->find($d);
-        $servicio = $this->admin->getSubject();
-        $trayecto = $servicio->getTrayecto();
+
+        $origen = $o ? $entityManager->getRepository(Parada::class)->find($o) : ($trayecto ? $trayecto->getOrigen() : null);
+        $destino = $d ? $entityManager->getRepository(Parada::class)->find($d) : ($trayecto ? $trayecto->getDestino() : null);
+
+        $fechahora_salida = $request->get('fechahora_salida');
+        if ($fechahora_salida) {
+            $fecha_salida = \DateTime::createFromFormat('Y-m-d H:i', $fechahora_salida);
+        } else {
+            $fecha_salida = ($servicio && $servicio->getPartida()) ? clone $servicio->getPartida() : new \DateTime();
+        }
+
+        $fechahora_llegada = $request->get('fechahora_llegada');
+        if ($fechahora_llegada) {
+            $fecha_llegada = \DateTime::createFromFormat('Y-m-d H:i', $fechahora_llegada);
+        } else {
+            $fecha_llegada = ($servicio && $servicio->getLlegada()) ? clone $servicio->getLlegada() : new \DateTime();
+        }
+
         $reserva = new Reserva();
-        $reserva->setCosto($this->admin->getServicioCosto($origen,$destino));
+        if ($origen && $destino) {
+            $reserva->setCosto($this->admin->getServicioCosto($origen, $destino));
+        }
         $reserva->setServicio($servicio);
         $reserva->setOrigen($origen);
         $reserva->setDestino($destino);
