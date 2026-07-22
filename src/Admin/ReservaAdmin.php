@@ -156,6 +156,7 @@ final class ReservaAdmin extends BaseAdmin
         $reserva_repo = $this->getEntityRepository(Reserva::class);
         $asientos_libres = $reserva_repo->get_asientos_libres($servicio->getId());
         $asientos_reserva = $reserva_repo->get_asientos_reserva($reserva->getId());
+        $asientos_wait = $reserva_repo->get_asientos_wait($servicio->getId());
 
         $estado = $reserva->getEstado();
         $form
@@ -171,6 +172,7 @@ final class ReservaAdmin extends BaseAdmin
             'transporte' => $servicio->getTransporte(),
             'asientos_libres' => $asientos_libres,
             'asientos_reserva' => $asientos_reserva,
+            'asientos_wait' => $asientos_wait,
             'idreserva' => $reserva->getId(),
             'required' => false,
             'mapped' => false])

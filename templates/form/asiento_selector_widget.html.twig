@@ -186,6 +186,8 @@
 
 {% set transporte=form.vars.transporte %}
 {% set asientos_libres=form.vars.asientos_libres %}
+{% set asientos_reserva=form.vars.asientos_reserva|default([]) %}
+{% set asientos_wait=form.vars.asientos_wait|default([]) %}
 {% set rows=transporte.grillaRows - 1 %}
 {% set cols=transporte.grillaCols - 1 %}
 {% set plantas=transporte.plantas - 1 %}
@@ -231,45 +233,48 @@
                         {% set asiento=transporte.getAsientoEnGrilla(planta, row, col) %}
                         {% if asiento %}
                             {% block celda_asiento %}
-                                {% if asiento.id in asientos_libres or asiento.id in asientos_reserva %}{# para ver asientos reservados pero en estado de espera #}
-                                    {% if asiento.id in asientos_reserva %}
-                                        {% if asiento.id not in asientos_libres %}{# es un asiento de mi reserva pero en estado WAIT (no esta libre) #}
-                                            {% set btn_class='asiento-btn estado-pendiente' %}
-                                            <button class="{{ btn_class }}" type="submit" name="toggle_asiento" value="{{ asiento.id }}">{{ asiento.numero }}</button>
-                                        {% else %}
-                                            {% set btn_class='asiento-btn estado-seleccionado' %}
-                                            <button class="{{ btn_class }}" type="submit" name="toggle_asiento" value="{{ asiento.id }}">{{ asiento.numero }}</button>
-                                        {% endif %}
+                                {% if asiento.id in asientos_reserva %}
+                                    {% if asiento.id not in asientos_libres %}
+                                        {% set btn_class='asiento-btn estado-pendiente' %}
+                                        <button class="{{ btn_class }}" type="submit" name="toggle_asiento" value="{{ asiento.id }}" title="Asiento {{ asiento.numero }} - En Espera de Pago">{{ asiento.numero }}</button>
                                     {% else %}
-                                        {% set btn_class='asiento-btn estado-libre' %}
-                                        <a href="#" class="{{ btn_class }}" data-toggle="modal" data-target="#modal{{ asiento.id }}" onclick="procAsiento({{ form.vars.idreserva }},{{ asiento.id }},{{ asiento.numero }})">{{ asiento.numero }}</a>
-                                        
-                                        {# form para carga de pasajero del boleto #}
-                                        <div class="modal fade" id="modal{{ asiento.id }}" tabindex="-1" role="dialog" aria-labelledby="modal" aria-hidden="true">
-                                            <div class="modal-dialog" style="max-width: 500px; margin: 30px auto;">
-                                                <div class="modal-content" style="text-align: left; border-radius: 6px; overflow: hidden; border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.25);">
-                                                    <div class="modal-body" id="f{{ asiento.id }}" style="padding: 0;"></div>
-                                                </div>
+                                        {% set btn_class='asiento-btn estado-seleccionado' %}
+                                        <button class="{{ btn_class }}" type="submit" name="toggle_asiento" value="{{ asiento.id }}">{{ asiento.numero }}</button>
+                                    {% endif %}
+                                {% elseif asiento.id in asientos_wait %}
+                                    <div class="asiento-btn estado-pendiente" title="Asiento {{ asiento.numero }} - En Espera de Pago">
+                                        <i class="fa fa-clock-o"></i>
+                                        <span>{{ asiento.numero }}</span>
+                                    </div>
+                                {% elseif asiento.id in asientos_libres %}
+                                    {% set btn_class='asiento-btn estado-libre' %}
+                                    <a href="#" class="{{ btn_class }}" data-toggle="modal" data-target="#modal{{ asiento.id }}" onclick="procAsiento({{ form.vars.idreserva }},{{ asiento.id }},{{ asiento.numero }})">{{ asiento.numero }}</a>
+                                    
+                                    {# form para carga de pasajero del boleto #}
+                                    <div class="modal fade" id="modal{{ asiento.id }}" tabindex="-1" role="dialog" aria-labelledby="modal" aria-hidden="true">
+                                        <div class="modal-dialog" style="max-width: 500px; margin: 30px auto;">
+                                            <div class="modal-content" style="text-align: left; border-radius: 6px; overflow: hidden; border: none; box-shadow: 0 5px 15px rgba(0,0,0,0.25);">
+                                                <div class="modal-body" id="f{{ asiento.id }}" style="padding: 0;"></div>
                                             </div>
                                         </div>
-                                        <script type="text/javascript">
-                                            function procAsiento(idreserva,idasiento,asientonumero) {
-                                                $.ajax({
-                                                    url: '{{ path('admin_app_reserva_modalForm') }}',
-                                                    method: 'POST',
-                                                    processData: false,
-                                                    contentType: "application/json; charset=utf-8",
-                                                    data: JSON.stringify({ "idreserva": idreserva, "idasiento": idasiento, 'asientonumero': asientonumero}),
-                                                    dataType: "json",
-                                                    success: function (data) {
-                                                        console.log('AJAX Success:', data);
-                                                        $('#f'+idasiento).append().empty();
-                                                        $('#f'+idasiento).append(data);
-                                                    }
-                                                });
-                                            }
-                                        </script>
-                                    {% endif %}
+                                    </div>
+                                    <script type="text/javascript">
+                                        function procAsiento(idreserva,idasiento,asientonumero) {
+                                            $.ajax({
+                                                url: '{{ path('admin_app_reserva_modalForm') }}',
+                                                method: 'POST',
+                                                processData: false,
+                                                contentType: "application/json; charset=utf-8",
+                                                data: JSON.stringify({ "idreserva": idreserva, "idasiento": idasiento, 'asientonumero': asientonumero}),
+                                                dataType: "json",
+                                                success: function (data) {
+                                                    console.log('AJAX Success:', data);
+                                                    $('#f'+idasiento).append().empty();
+                                                    $('#f'+idasiento).append(data);
+                                                }
+                                            });
+                                        }
+                                    </script>
                                 {% else %}
                                     <div class="asiento-btn estado-ocupado" title="Asiento {{ asiento.numero }} - Ocupado">
                                         <i class="fa fa-ban"></i>

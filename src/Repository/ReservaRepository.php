@@ -85,6 +85,24 @@ class ReservaRepository extends ServiceEntityRepository
         return $rs;
     }
 
+    public function get_asientos_wait($servicio_id) {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+            'SELECT IDENTITY(b.asiento) as id
+            FROM App\Entity\Boleto b
+            WHERE b.servicio = :servicio_id
+              AND b.estado = :boleto_wait'
+        )->setParameter('servicio_id', $servicio_id)
+        ->setParameter('boleto_wait', Boleto::STATE_RESERVED_WAIT);
+
+        $rs = [];
+        foreach($query->getResult() as $row) {
+            $rs[] = $row['id'];
+        }
+        return $rs;
+    }
+
     //    /**
     //     * @return Reserva[] Returns an array of Reserva objects
     //     */

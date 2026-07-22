@@ -15,6 +15,7 @@ class AsientoSelectorType extends AbstractType
     {
         $resolver->setDefaults([
             'x' => false,
+            'asientos_wait' => [],
         ]);
 
         # class option is required by base class
@@ -23,6 +24,9 @@ class AsientoSelectorType extends AbstractType
             'asientos_libres', # numeros de asientos libres
             'asientos_reserva',
             'idreserva',
+        ));
+        $resolver->setDefined(array(
+            'asientos_wait',
         ));
     }
 
@@ -39,6 +43,7 @@ class AsientoSelectorType extends AbstractType
         $builder->setAttribute("asientos_libres", $options['asientos_libres']);
         $builder->setAttribute("idreserva", $options['idreserva']);
         $builder->setAttribute("asientos_reserva", $options['asientos_reserva']);
+        $builder->setAttribute("asientos_wait", $options['asientos_wait'] ?? []);
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options)
@@ -49,5 +54,6 @@ class AsientoSelectorType extends AbstractType
         $view->vars['idreserva'] = $form->getConfig()->getAttribute('idreserva');
         $view->vars['asientos_libres'] = $form->getConfig()->getAttribute('asientos_libres');
         $view->vars['asientos_reserva'] = $form->getConfig()->getAttribute('asientos_reserva');
+        $view->vars['asientos_wait'] = $form->getConfig()->getAttribute('asientos_wait') ?? [];
     }
 }
