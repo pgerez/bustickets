@@ -130,8 +130,14 @@ class Reserva
             }
         }
 
+        $limite = new \DateTime('-5 minutes');
         foreach ($this->boletos as $boleto) {
-            if ($boleto->getEstado() !== Boleto::STATE_RESERVED_WAIT) {
+            // Si el boleto está en STATE_DRAFT y su update_at fue hace más de 5 minutos, expiró
+            if ($boleto->getEstado() === Boleto::STATE_DRAFT && $boleto->getUpdateAt() && $boleto->getUpdateAt() < $limite) {
+                return false;
+            }
+            // Si el boleto fue cancelado u otro estado no permitido
+            if (!in_array($boleto->getEstado(), [Boleto::STATE_DRAFT, Boleto::STATE_RESERVED_WAIT], true)) {
                 return false;
             }
         }

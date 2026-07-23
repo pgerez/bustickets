@@ -47,35 +47,53 @@ final class ReservaAdminController extends CRUDController
         $reserva_id = $request->get('id');
         $reserva = $entityManager->getRepository(Reserva::class)->find($reserva_id);
 
-        if (!$reserva || !$reserva->isCompletarCompraValida()) {
+        if (!$reserva) {
+            $this->addFlash('danger', 'Reserva no encontrada.');
+            return $this->redirectToRoute('admin_app_servicio_list');
+        }
+
+        if (!$reserva->isCompletarCompraValida()) {
             $this->addFlash('danger', 'La reserva ha expirado o los asientos fueron liberados por tiempo de espera. Por favor, selecciona nuevamente el servicio y tus asientos.');
             return $this->redirectToRoute('admin_app_servicio_list');
         }
 
-        foreach ($reserva->getBoletos() as $boleto):
-            if($boleto->getEstado() != Boleto::STATE_RESERVED_WAIT):
-                $boletoWait = $entityManager->getRepository(Boleto::class)->findOneBy(
-                    ['servicio' => $boleto->getServicio(), 'asiento' => $boleto->getAsiento(), 'estado' => boleto::STATE_RESERVED_WAIT]
-                );
+        foreach ($reserva->getBoletos() as $boleto) {
+            $asientoId = $boleto->getAsiento() ? $boleto->getAsiento()->getId() : null;
+            $servicioId = $boleto->getServicio() ? $boleto->getServicio()->getId() : null;
 
-                if ($boletoWait) {
-                    $reserva->setEstado(Reserva::STATE_DRAFT);
-                    $reserva->removeBoleto($boleto);
-                    $entityManager->persist($reserva);
-                    $entityManager->flush();
-                    $this->addFlash('danger', 'El asiento: '.$boleto->getAsiento()->getNumero().' ya no esta disponible');
-                    return $this->redirectToRoute('admin_app_reserva_edit',['id' => $reserva->getId()]);
+            if ($asientoId && $servicioId) {
+                // Verificar si existe boleto de OTRA reserva ocupando el mismo asiento
+                $conflictBoleto = $entityManager->getRepository(Boleto::class)->createQueryBuilder('b')
+                    ->where('b.servicio = :servicioId')
+                    ->andWhere('b.asiento = :asientoId')
+                    ->andWhere('b.reserva != :reservaId')
+                    ->andWhere('b.estado IN (:estadosOcupados)')
+                    ->setParameter('servicioId', $servicioId)
+                    ->setParameter('asientoId', $asientoId)
+                    ->setParameter('reservaId', $reserva->getId())
+                    ->setParameter('estadosOcupados', [Boleto::STATE_RESERVED, Boleto::STATE_RESERVED_TAKEN, Boleto::STATE_RESERVED_WAIT])
+                    ->getQuery()
+                    ->getOneOrNullResult();
+
+                if ($conflictBoleto) {
+                    $this->addFlash('danger', 'El asiento ' . ($boleto->getAsiento() ? $boleto->getAsiento()->getNumero() : '') . ' ya fue reservado por otro usuario. Por favor selecciona nuevamente.');
+                    return $this->redirectToRoute('admin_app_servicio_list');
                 }
+            }
 
-                // Cambiar estado a reservado
-                $boleto->setEstado(boleto::STATE_RESERVED_WAIT);
-                $boleto->setUpdateAt(new \DateTimeImmutable());
-                $entityManager->persist($boleto);
-                $entityManager->flush();
-            endif;
-        endforeach;
-        $mercadopagourl =
-            $this->admin->getSubject()->getUrlpago();
+            // Cambiar estado del boleto a reserva en espera
+            $boleto->setEstado(Boleto::STATE_RESERVED_WAIT);
+            $boleto->setUpdateAt(new \DateTimeImmutable());
+            $entityManager->persist($boleto);
+        }
+
+        $entityManager->flush();
+
+        $mercadopagourl = $reserva->getUrlpago();
+        if (!$mercadopagourl) {
+            $this->addFlash('danger', 'No se pudo generar el enlace de pago de Mercado Pago.');
+            return $this->redirectToRoute('admin_app_servicio_list');
+        }
 
         return $this->redirect($mercadopagourl);
     }

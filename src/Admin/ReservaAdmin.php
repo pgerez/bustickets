@@ -303,6 +303,11 @@ final class ReservaAdmin extends BaseAdmin
             $reserva->setUser($user);
             #var_dump($preference);#$reserva->setPaymentId('123456');
             $reserva->setEstado(Reserva::STATE_PENDING_PAYMENT);
+            foreach ($reserva->getBoletos() as $b) {
+                $b->setEstado(Boleto::STATE_RESERVED_WAIT);
+                $b->setUpdateAt(new \DateTimeImmutable());
+                $entityManager->persist($b);
+            }
             $entityManager->persist($reserva);
             $entityManager->flush();
         }
