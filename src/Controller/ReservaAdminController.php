@@ -264,6 +264,7 @@ EOF;
                 ->setParameter('servicioId', $servicio->getId())
                 ->setParameter('dni', (int)$dni)
                 ->setParameter('estadoCancelado', Boleto::STATE_CANCELED)
+                ->setMaxResults(1)
                 ->getQuery()
                 ->getOneOrNullResult();
 

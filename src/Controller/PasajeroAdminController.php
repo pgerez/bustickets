@@ -47,6 +47,7 @@ final class PasajeroAdminController extends CRUDController
                 ->setParameter('servicioId', $idservicio)
                 ->setParameter('dni', (int)$dni)
                 ->setParameter('estadoCancelado', Boleto::STATE_CANCELED)
+                ->setMaxResults(1)
                 ->getQuery()
                 ->getOneOrNullResult();
 

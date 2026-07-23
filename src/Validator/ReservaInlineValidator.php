@@ -60,7 +60,8 @@ class ReservaInlineValidator
                     ->andWhere('b.estado != :estadoCancelado')
                     ->setParameter('servicio', $servicio)
                     ->setParameter('dni', $dni)
-                    ->setParameter('estadoCancelado', \App\Entity\Boleto::STATE_CANCELED);
+                    ->setParameter('estadoCancelado', \App\Entity\Boleto::STATE_CANCELED)
+                    ->setMaxResults(1);
 
                 if ($boleto->getId()) {
                     $qb->andWhere('b.id != :boletoId')
