@@ -48,13 +48,7 @@ final class BoletoAdmin extends BaseAdmin
 
     protected function configureDatagridFilters(DatagridMapper $filter): void
     {
-        $filter
-            ->add('id')
-            ->add('pasajero.dni')
-            ->add('viaje_fecha')
-            ->add('viaje_hora')
-            ->add('costo')
-        ;
+        // Filtros nativos de Sonata removidos a favor del buscador móvil en tiempo real
     }
 
     protected function configureQuery(ProxyQueryInterface $query): ProxyQueryInterface
