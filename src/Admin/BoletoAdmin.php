@@ -25,6 +25,11 @@ use App\Form\Type\PasajeroType;
 
 final class BoletoAdmin extends BaseAdmin
 {
+    protected function configure(): void
+    {
+        parent::configure();
+        $this->setTemplate('list', 'BoletoAdmin/list.html.twig');
+    }
 
     public function configureRoutes(RouteCollectionInterface $collection): void
     {
