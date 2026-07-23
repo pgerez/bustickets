@@ -47,6 +47,10 @@ final class ReservaAdminController extends CRUDController
         $reserva_id = $request->get('id');
         $reserva = $entityManager->getRepository(Reserva::class)->find($reserva_id);
 
+        if (!$reserva || !$reserva->isCompletarCompraValida()) {
+            $this->addFlash('danger', 'La reserva ha expirado o los asientos fueron liberados por tiempo de espera. Por favor, selecciona nuevamente el servicio y tus asientos.');
+            return $this->redirectToRoute('admin_app_servicio_list');
+        }
 
         foreach ($reserva->getBoletos() as $boleto):
             if($boleto->getEstado() != Boleto::STATE_RESERVED_WAIT):

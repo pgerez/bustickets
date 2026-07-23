@@ -234,7 +234,12 @@
     {% if reservas is not empty %}
         {% for reserva in reservas %}
             {% if reserva.estado in [1, 2] %}
-                {% set card_class = reserva.estado == 2 ? 'approved' : 'pending' %}
+                {% set is_approved = (reserva.estado == 2) %}
+                {% set is_valid_pending = (reserva.estado == 1 and reserva.isCompletarCompraValida) %}
+                {% set card_class = is_approved ? 'approved' : (is_valid_pending ? 'pending' : 'rejected') %}
+                {% set status_class = is_approved ? 'status-badge status-success' : (is_valid_pending ? 'status-badge status-warning' : 'status-badge status-danger') %}
+                {% set status_text = is_approved ? 'Pago Aprobado' : (is_valid_pending ? 'Pendiente de Pago' : 'Reserva Expirada / Asientos Liberados') %}
+
                 <div class="reserva-card {{ card_class }}">
                     <div class="reserva-header">
                         <h4 class="reserva-title">
@@ -242,7 +247,7 @@
                             <span class="reserva-id">#{{ reserva.id }}</span>
                         </h4>
                         <div>
-                            <span class="{{ badge_class[reserva.estado] }}">{{ status_name[reserva.estado] }}</span>
+                            <span class="{{ status_class }}">{{ status_text }}</span>
                         </div>
                     </div>
                     
@@ -269,9 +274,13 @@
                                         {% endif %}
                                     </td>
                                     <td style="text-align: right;">
-                                        {% if reserva.estado == 1 %}
+                                        {% if is_valid_pending %}
                                             <a href="{{ path('admin_app_reserva_edit', {'id': reserva.id}) }}" class="btn-complete-payment">
                                                 <i class="fa fa-credit-card"></i> Completar compra
+                                            </a>
+                                        {% elseif not is_approved %}
+                                            <a href="{{ path('admin_app_servicio_list') }}" class="btn btn-sm btn-default" style="font-weight: 600; border-radius: 6px; color: #4b5563;">
+                                                <i class="fa fa-bus"></i> Seleccionar Asientos
                                             </a>
                                         {% endif %}
                                     </td>

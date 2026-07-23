@@ -113,6 +113,32 @@ class Reserva
         return $this->estado == self::STATE_PENDING_PAYMENT;
     }
 
+    public function isCompletarCompraValida(): bool
+    {
+        if ($this->estado === self::STATE_COMPLETED) {
+            return false;
+        }
+
+        if ($this->boletos->isEmpty()) {
+            return false;
+        }
+
+        if ($this->servicio && $this->servicio->getPartida()) {
+            $now = new \DateTime();
+            if ($this->servicio->getPartida() < $now) {
+                return false;
+            }
+        }
+
+        foreach ($this->boletos as $boleto) {
+            if ($boleto->getEstado() !== Boleto::STATE_RESERVED_WAIT) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public function recalcularPago() {
         $has_pago = $this->pagos->count() == 1;
         if($has_pago) {

@@ -218,11 +218,11 @@
 
     {% if reserva is defined and reserva is not null %}
         {% set is_approved = (reserva.estado == 2 or 'aprobado' in mensaje|default('')|lower) %}
-        {% set is_pending = (reserva.estado == 1 or ('pendiente' in mensaje|default('')|lower and not is_approved)) %}
+        {% set is_pending = (reserva.estado == 1 and reserva.isCompletarCompraValida) %}
 
         {% set card_class = is_approved ? 'approved' : (is_pending ? 'pending' : 'rejected') %}
         {% set badge_class = is_approved ? 'status-badge status-success' : (is_pending ? 'status-badge status-warning' : 'status-badge status-danger') %}
-        {% set status_label = is_approved ? 'Pago Aprobado' : (is_pending ? 'Pendiente de Pago' : 'Pago Rechazado') %}
+        {% set status_label = is_approved ? 'Pago Aprobado' : (is_pending ? 'Pendiente de Pago' : 'Reserva Expirada') %}
 
         {% if mensaje is defined and mensaje is not empty %}
             {% if is_approved %}
@@ -301,9 +301,13 @@
                                 {% endif %}
                             </td>
                             <td style="text-align: right;">
-                                {% if reserva.estado == 1 %}
+                                {% if is_pending %}
                                     <a href="{{ path('admin_app_reserva_edit', {'id': reserva.id}) }}" class="btn btn-sm btn-warning" style="font-weight: 600; border-radius: 6px;">
                                         <i class="fa fa-credit-card"></i> Completar compra
+                                    </a>
+                                {% elseif not is_approved %}
+                                    <a href="{{ path('admin_app_servicio_list') }}" class="btn btn-sm btn-default" style="font-weight: 600; border-radius: 6px;">
+                                        <i class="fa fa-bus"></i> Seleccionar Asientos
                                     </a>
                                 {% endif %}
                             </td>
