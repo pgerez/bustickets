@@ -50,7 +50,7 @@ final class BoletoAdmin extends BaseAdmin
     {
         $filter
             ->add('id')
-            ->add('pasajero.dni', null, ['show_filter' => true])
+            ->add('pasajero.dni')
             ->add('viaje_fecha')
             ->add('viaje_hora')
             ->add('costo')
