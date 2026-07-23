@@ -34,7 +34,47 @@ class ReservaInlineValidator
         }
 
         # Validar que un pasajero solo ocupe un asiento en el servicio actual
-        # TODO
+        $servicio = $reserva->getServicio();
+        if ($servicio) {
+            $pasajerosDniMap = [];
+            foreach ($reserva->getBoletos() as $i => $boleto) {
+                $pasajero = $boleto->getPasajero();
+                if (!$pasajero || !$pasajero->getDni()) {
+                    continue;
+                }
+                $dni = $pasajero->getDni();
+
+                // Verificar duplicados dentro de la misma reserva
+                if (isset($pasajerosDniMap[$dni])) {
+                    $msg = sprintf('El pasajero con DNI %s no puede ocupar más de un asiento en el mismo servicio.', $dni);
+                    $errorElement->with('boletos[' . $i . '].pasajero')->addViolation($msg)->end();
+                } else {
+                    $pasajerosDniMap[$dni] = true;
+                }
+
+                // Verificar si el pasajero ya tiene otro boleto en este servicio (en otra reserva u otro boleto)
+                $qb = $this->entityManager->getRepository(\App\Entity\Boleto::class)->createQueryBuilder('b')
+                    ->join('b.pasajero', 'p')
+                    ->where('b.servicio = :servicio')
+                    ->andWhere('p.dni = :dni')
+                    ->andWhere('b.estado != :estadoCancelado')
+                    ->setParameter('servicio', $servicio)
+                    ->setParameter('dni', $dni)
+                    ->setParameter('estadoCancelado', \App\Entity\Boleto::STATE_CANCELED);
+
+                if ($boleto->getId()) {
+                    $qb->andWhere('b.id != :boletoId')
+                       ->setParameter('boletoId', $boleto->getId());
+                }
+
+                $existingBoleto = $qb->getQuery()->getOneOrNullResult();
+                if ($existingBoleto) {
+                    $numAsiento = $existingBoleto->getAsiento() ? $existingBoleto->getAsiento()->getNumero() : '';
+                    $msg = sprintf('El pasajero con DNI %s ya tiene asignado el Asiento %s en este servicio.', $dni, $numAsiento);
+                    $errorElement->with('boletos[' . $i . '].pasajero')->addViolation($msg)->end();
+                }
+            }
+        }
 
         # Validar Pago
         #if(Reserva::STATE_PENDING_PAYMENT == $reserva->getEstado()) {

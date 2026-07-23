@@ -98,13 +98,17 @@ final class ReservaAdminController extends CRUDController
         return $this->redirect($mercadopagourl);
     }
 
-        public function modalFormAction(Request $request): Response
+    public function modalFormAction(Request $request, EntityManagerInterface $entityManager): Response
     {
         $data1      = $request->getContent();
         $data       = json_decode($data1);
-        $idasiento = $data->idasiento;
-        $idreserva = $data->idreserva;
-        $numeroasiento = $data->asientonumero;
+        $idasiento = $data->idasiento ?? null;
+        $idreserva = $data->idreserva ?? null;
+        $numeroasiento = $data->asientonumero ?? '';
+
+        $reserva = $idreserva ? $entityManager->getRepository(Reserva::class)->find($idreserva) : null;
+        $idservicio = ($reserva && $reserva->getServicio()) ? $reserva->getServicio()->getId() : 'null';
+
         $search = $this->generateUrl(
             'admin_app_pasajero_searchForDni',
             [],
@@ -141,6 +145,9 @@ final class ReservaAdminController extends CRUDController
                                 <span class="help-block" style="font-size: 11px; margin-top: 4px; color: #888; margin-bottom: 0;">
                                     <i class="fa fa-info-circle"></i> Al salir del campo se buscará automáticamente si el pasajero ya existe.
                                 </span>
+                                <div id="asiento-error-warning" class="alert alert-danger" style="display: none; margin-top: 10px; font-size: 13px; font-weight: bold;">
+                                    <i class="fa fa-exclamation-triangle"></i> <span id="asiento-error-text"></span>
+                                </div>
                                 <input type="hidden" id="idasiento" name="idasiento"  value="'.$idasiento.'" />
                                 <input type="hidden" id="idreserva" name="idreserva"  value="'.$idreserva.'" />
                             </div>
@@ -182,7 +189,7 @@ final class ReservaAdminController extends CRUDController
                     </div>
                     <div class="modal-footer" style="background-color: #f9f9f9; border-top: 1px solid #eee; padding: 15px 25px;">
                         <button type="button" class="btn btn-default btn-flat" data-dismiss="modal" style="border-radius: 4px; padding: 8px 16px;">Cerrar</button>
-                        <button type="submit" class="btn btn-primary btn-flat" style="border-radius: 4px; padding: 8px 20px; background-color: #3c8dbc; border-color: #367fa9;">
+                        <button type="submit" id="btn-guardar-pasajero" class="btn btn-primary btn-flat" style="border-radius: 4px; padding: 8px 20px; background-color: #3c8dbc; border-color: #367fa9;">
                             <i class="fa fa-save"></i> Guardar Pasajero
                         </button>
                     </div>
@@ -192,19 +199,29 @@ final class ReservaAdminController extends CRUDController
                     <script type="text/javascript">
                             $('#sexo').select2();
                             function searchPasajero(dni) {
+                                if (!dni) return;
                                 $.ajax({
                                     url: '{$search}',
                                     method: 'POST',
                                     processData: false,
                                     contentType: "application/json; charset=utf-8",
-                                    data: JSON.stringify({ "dni": dni}),
+                                    data: JSON.stringify({ "dni": dni, "idservicio": {$idservicio} }),
                                     dataType: "json",
                                     success: function (data) {
                                         console.log('AJAX Success:', data);
-                                        $('#apellido').val(data.apellido);
-                                        $('#nombre').val(data.nombre);
-                                        $('#sexo').val(data.sexo).select2();
-                                        
+                                        if (data) {
+                                            if (data.apellido) $('#apellido').val(data.apellido);
+                                            if (data.nombre) $('#nombre').val(data.nombre);
+                                            if (data.sexo) $('#sexo').val(data.sexo).select2();
+                                            if (data.yaTieneAsiento) {
+                                                $('#asiento-error-text').text('Esta persona (DNI ' + dni + ') ya posee el Asiento ' + data.asientoNumero + ' asignado en este servicio.');
+                                                $('#asiento-error-warning').show();
+                                                $('#btn-guardar-pasajero').prop('disabled', true);
+                                            } else {
+                                                $('#asiento-error-warning').hide();
+                                                $('#btn-guardar-pasajero').prop('disabled', false);
+                                            }
+                                        }
                                     }
                                 });
                             }
@@ -230,7 +247,33 @@ EOF;
         $reservaRepo = $entityManager->getRepository(Reserva::class);
 
         $reserva = $reservaRepo->find($idreserva);
-        $servicio = $reserva->getServicio();
+        $servicio = $reserva ? $reserva->getServicio() : null;
+
+        if (!$reserva || !$servicio) {
+            $this->addFlash('danger', 'Reserva o servicio no encontrado.');
+            return $this->redirectToRoute('admin_app_servicio_list');
+        }
+
+        // Verificar si el pasajero ya tiene un boleto asignado en este mismo servicio
+        if ($dni) {
+            $existBoleto = $entityManager->getRepository(Boleto::class)->createQueryBuilder('b')
+                ->join('b.pasajero', 'p')
+                ->where('b.servicio = :servicioId')
+                ->andWhere('p.dni = :dni')
+                ->andWhere('b.estado != :estadoCancelado')
+                ->setParameter('servicioId', $servicio->getId())
+                ->setParameter('dni', (int)$dni)
+                ->setParameter('estadoCancelado', Boleto::STATE_CANCELED)
+                ->getQuery()
+                ->getOneOrNullResult();
+
+            if ($existBoleto) {
+                $numAsiento = $existBoleto->getAsiento() ? $existBoleto->getAsiento()->getNumero() : '';
+                $this->addFlash('danger', sprintf('El pasajero con DNI %s ya posee el Asiento %s asignado en este servicio.', $dni, $numAsiento));
+                return $this->redirectToRoute('admin_app_reserva_edit', ['id' => $idreserva]);
+            }
+        }
+
         #$transporte = $servicio->getTransporte();
         $trayecto = $servicio->getTrayecto();
         $asiento = $asientoRepo->find($idasiento);
