@@ -139,6 +139,12 @@ class Reserva
         return true;
     }
 
+    public function getExternalReference(): string
+    {
+        $userId = $this->getUser() ? $this->getUser()->getId() : 0;
+        return 'reserva_' . ($this->getId() ?? 0) . '_usuario_' . $userId;
+    }
+
     public function recalcularPago() {
         $has_pago = $this->pagos->count() == 1;
         if($has_pago) {

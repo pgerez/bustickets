@@ -1,0 +1,7 @@
+{% extends '@SonataAdmin/CRUD/base_list_field.html.twig' %}
+
+{% block field %}
+    <code style="font-size: 11px; background: #f3f4f6; padding: 3px 6px; border-radius: 4px; color: #1f2937; border: 1px solid #e5e7eb; font-family: monospace;">
+        {{ object.externalReference }}
+    </code>
+{% endblock %}

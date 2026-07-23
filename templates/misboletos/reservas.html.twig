@@ -270,8 +270,9 @@
                                 <tr>
                                     <td>
                                         {% if reserva.paymentId %}
-                                            <strong>ID Pago MP:</strong> {{ reserva.paymentId }}
+                                            <strong>ID Pago MP:</strong> {{ reserva.paymentId }} | 
                                         {% endif %}
+                                        <strong>Ref. Externa MP:</strong> <code style="font-size: 11px; background: #f3f4f6; padding: 2px 5px; border-radius: 4px;">{{ reserva.externalReference }}</code>
                                     </td>
                                     <td style="text-align: right;">
                                         {% if is_valid_pending %}

@@ -297,8 +297,9 @@
                             <td>
                                 {% set payment_id = collectionId ?? reserva.paymentId %}
                                 {% if payment_id %}
-                                    <strong>ID Transacción MP:</strong> {{ payment_id }}
+                                    <strong>ID Transacción MP:</strong> {{ payment_id }} | 
                                 {% endif %}
+                                <strong>Ref. Externa MP:</strong> <code style="font-size: 11px; background: #f3f4f6; padding: 2px 5px; border-radius: 4px;">{{ reserva.externalReference }}</code>
                             </td>
                             <td style="text-align: right;">
                                 {% if is_pending %}

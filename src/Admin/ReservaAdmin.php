@@ -50,6 +50,7 @@ final class ReservaAdmin extends BaseAdmin
     {
         $filter
             ->add('id')
+            ->add('payment_id', null, ['label' => 'ID Pago MP'])
             ->add('estado')
             ->add('user', null, ['label' => 'Comprador'])
             ->add('servicio.id', null, ['label' => 'ID Viaje'])
@@ -117,6 +118,10 @@ final class ReservaAdmin extends BaseAdmin
             ])
             ->add('estado', null, ['template' => 'ReservaAdmin/estado.html.twig'])
             ->add('boletos', null, ['label' => 'Boletos'])
+            ->add('externalReference', null, [
+                'label' => 'Ref. Externa MP',
+                'template' => 'ReservaAdmin/external_reference.html.twig'
+            ])
             ->add('payment_id', null, ['label' => 'ID Pago MP'])
             ->add(ListMapper::NAME_ACTIONS, null, [
                 'actions' => [
