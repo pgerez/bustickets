@@ -1,9 +1,30 @@
 {% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
 
 {% block field %}
-    {% if value is not null %}
-        <strong class="text-success" style="font-size: 16px;">ARS {{ (value/100)|number_format(2, ',', '.') }}</strong>
-    {% else %}
-        <span class="text-muted">ARS 0,00</span>
-    {% endif %}
+    {% set total = object.montoTotal %}
+    {% set abonado = object.montoAbonado %}
+    {% set saldo = object.saldoPendiente %}
+
+    <div style="background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px 15px; margin-top: 2px;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr style="border-bottom: 1px dashed #e5e7eb;">
+                <td style="padding: 6px 0; color: #4b5563;"><strong>Monto Total del Pasaje:</strong></td>
+                <td style="padding: 6px 0; text-align: right; font-weight: bold; font-size: 15px; color: #111827;">
+                    ARS {{ (total/100)|number_format(2, ',', '.') }}
+                </td>
+            </tr>
+            <tr style="border-bottom: 1px dashed #e5e7eb;">
+                <td style="padding: 6px 0; color: #047857;"><strong>Seña Abonada (Mercado Pago):</strong></td>
+                <td style="padding: 6px 0; text-align: right; font-weight: bold; color: #047857; font-size: 15px;">
+                    ARS {{ (abonado/100)|number_format(2, ',', '.') }}
+                </td>
+            </tr>
+            <tr>
+                <td style="padding: 6px 0 0 0; color: #b91c1c;"><strong>Saldo Pendiente (en efectivo):</strong></td>
+                <td style="padding: 6px 0 0 0; text-align: right; font-weight: bold; color: #b91c1c; font-size: 15px;">
+                    ARS {{ (saldo/100)|number_format(2, ',', '.') }}
+                </td>
+            </tr>
+        </table>
+    </div>
 {% endblock %}

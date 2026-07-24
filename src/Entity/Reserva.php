@@ -402,5 +402,21 @@ class Reserva
         }
         return $this->calcularMontoTotal();
     }
-    
+
+    public function getMontoAbonado(): int
+    {
+        $pago = $this->pagos->last();
+        if ($pago && $pago->getImporteRecibido() !== null && $pago->getImporteRecibido() > 0) {
+            return $pago->getImporteRecibido();
+        }
+        if ($this->estado === self::STATE_COMPLETED || $this->estado === self::STATE_PENDING_PAYMENT) {
+            return (int) round($this->getMontoTotal() * 0.1);
+        }
+        return 0;
+    }
+
+    public function getSaldoPendiente(): int
+    {
+        return max(0, $this->getMontoTotal() - $this->getMontoAbonado());
+    }
 }

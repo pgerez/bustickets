@@ -229,12 +229,12 @@ final class ReservaAdmin extends BaseAdmin
                     'label' => 'Detalle del Viaje',
                     'template' => 'ReservaAdmin/show_detalle_viaje.html.twig',
                 ])
-                ->add('montoTotal', null, [
-                    'label' => 'Monto Total',
-                    'template' => 'ReservaAdmin/show_monto.html.twig',
-                ])
             ->end()
             ->with('Información de Pago', ['class' => 'col-md-6'])
+                ->add('montoTotal', null, [
+                    'label' => 'Desglose de Pago',
+                    'template' => 'ReservaAdmin/show_monto.html.twig',
+                ])
                 ->add('medioPago', null, ['label' => 'Medio de Pago'])
                 ->add('payment_id', null, ['label' => 'ID Pago Mercado Pago'])
                 ->add('preference_id', null, ['label' => 'ID Preferencia Mercado Pago'])
