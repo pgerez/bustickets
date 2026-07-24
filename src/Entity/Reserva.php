@@ -161,11 +161,15 @@ class Reserva
         }
     }
 
-    public function calcularMontoTotal()
+    public function calcularMontoTotal(): int
     {
         $total = 0;
-        foreach($this->boletos as $boleto) {
-            $total = $total + $boleto->getCosto();
+        foreach ($this->boletos as $boleto) {
+            $total += (int) $boleto->getCosto();
+        }
+        if ($total === 0 && $this->costo > 0) {
+            $count = max(1, $this->boletos->count());
+            $total = $this->costo * $count;
         }
         return $total;
     }
@@ -397,9 +401,6 @@ class Reserva
 
     public function getMontoTotal(): int
     {
-        if ($this->costo > 0) {
-            return $this->costo;
-        }
         return $this->calcularMontoTotal();
     }
 
