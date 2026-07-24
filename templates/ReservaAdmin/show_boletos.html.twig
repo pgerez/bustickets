@@ -1,0 +1,127 @@
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+
+{% block field %}
+    {% if object.boletos is not empty and object.boletos|length > 0 %}
+        <div class="table-responsive" style="margin-top: 5px;">
+            <table class="table table-bordered table-striped table-hover align-middle" style="margin-bottom: 0;">
+                <thead>
+                    <tr style="background-color: #f4f6f9; color: #333;">
+                        <th style="width: 120px; text-align: center;">Asiento</th>
+                        <th>Ocupante / Pasajero</th>
+                        <th style="width: 130px;">DNI</th>
+                        <th>Datos Adicionales</th>
+                        <th>Tramo / Fecha Viaje</th>
+                        <th style="width: 120px; text-align: right;">Costo</th>
+                        <th style="width: 120px; text-align: center;">Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for boleto in object.boletos %}
+                        {% set seat = boleto.asiento %}
+                        {% set pax = boleto.pasajero %}
+                        <tr>
+                            <td style="text-align: center; vertical-align: middle;">
+                                <span class="label label-primary" style="font-size: 14px; padding: 6px 10px; display: inline-block;">
+                                    <i class="fa fa-bus" style="margin-right: 4px;"></i> N° {{ seat ? seat.numero : 'S/N' }}
+                                </span>
+                                {% if seat and (seat.planta is not null or seat.categoria is not null) %}
+                                    <div style="margin-top: 4px;">
+                                        <small class="text-muted">
+                                            {% if seat.planta is not null %}
+                                                {{ seat.planta == 0 ? 'P. Baja' : 'P. Alta' }}
+                                            {% endif %}
+                                            {% if seat.categoria and constant('App\\Entity\\TransporteAsiento::$categorias')[seat.categoria] is defined %}
+                                                {% if seat.planta is not null %} - {% endif %}
+                                                {{ constant('App\\Entity\\TransporteAsiento::$categorias')[seat.categoria] }}
+                                            {% endif %}
+                                        </small>
+                                    </div>
+                                {% endif %}
+                            </td>
+                            <td style="vertical-align: middle;">
+                                {% if pax %}
+                                    <strong style="font-size: 14px;">
+                                        <i class="fa fa-user text-primary" style="margin-right: 6px;"></i>{{ pax.apellido }}, {{ pax.nombre }}
+                                    </strong>
+                                {% else %}
+                                    <span class="text-muted"><i>Sin pasajero asignado</i></span>
+                                {% endif %}
+                            </td>
+                            <td style="vertical-align: middle;">
+                                {% if pax and pax.dni %}
+                                    <span class="badge" style="background-color: #5ab6e6; font-size: 13px; padding: 5px 8px;">{{ pax.dni }}</span>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td style="vertical-align: middle;">
+                                {% if pax %}
+                                    <small style="color: #555;">
+                                        {% set details = [] %}
+                                        {% if pax.sexo %}
+                                            {% set details = details|merge(['<strong>Sexo:</strong> ' ~ pax.sexo]) %}
+                                        {% endif %}
+                                        {% if pax.edad %}
+                                            {% set details = details|merge(['<strong>Edad:</strong> ' ~ pax.edad ~ ' años']) %}
+                                        {% endif %}
+                                        {% if pax.fechaNacimiento %}
+                                            {% set details = details|merge(['<strong>F. Nac:</strong> ' ~ pax.fechaNacimiento|date('d/m/Y')]) %}
+                                        {% endif %}
+                                        
+                                        {% if details is not empty %}
+                                            {{ details|join(' &bull; ')|raw }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </small>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td style="vertical-align: middle;">
+                                <small>
+                                    <strong>{{ boleto.origen ? boleto.origen.nombre : (object.origen ? object.origen.nombre : '-') }}</strong>
+                                    &rarr;
+                                    <strong>{{ boleto.destino ? boleto.destino.nombre : (object.destino ? object.destino.nombre : '-') }}</strong>
+                                    <br/>
+                                    <span class="text-muted">
+                                        {% set fFecha = boleto.viajeFecha ?: object.fechaSalida %}
+                                        {% set fHora = boleto.viajeHora %}
+                                        {% if fFecha %}
+                                            <i class="fa fa-calendar" style="margin-right: 2px;"></i> {{ fFecha|date('d/m/Y') }}
+                                        {% endif %}
+                                        {% if fHora %}
+                                            <i class="fa fa-clock-o" style="margin-left: 4px; margin-right: 2px;"></i> {{ fHora|date('H:i') }} Hs
+                                        {% endif %}
+                                    </span>
+                                </small>
+                            </td>
+                            <td style="text-align: right; vertical-align: middle;">
+                                {% if boleto.costo is not null %}
+                                    <strong style="color: #27ae60;">ARS {{ (boleto.costo / 100)|number_format(2, ',', '.') }}</strong>
+                                {% else %}
+                                    <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td style="text-align: center; vertical-align: middle;">
+                                {% set estado = boleto.estado %}
+                                {% set estadoBadges = {
+                                    0: 'label-default',
+                                    1: 'label-info',
+                                    2: 'label-success',
+                                    3: 'label-warning',
+                                    4: 'label-danger'
+                                } %}
+                                <span class="label {{ estadoBadges[estado] ?? 'label-default' }}" style="padding: 5px 8px; font-size: 11px;">
+                                    {{ boleto.estadoTexto }}
+                                </span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <span class="text-muted">No hay asientos ni ocupantes registrados para esta reserva.</span>
+    {% endif %}
+{% endblock %}

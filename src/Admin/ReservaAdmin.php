@@ -215,18 +215,36 @@ final class ReservaAdmin extends BaseAdmin
     protected function configureShowFields(ShowMapper $show): void
     {
         $show
-            ->add('id')
-            ->add('estado', null, [
-                'label' => 'Estado',
-                'template' => 'ReservaAdmin/show_estado.html.twig',
-            ])
-            ->add('user', null, [
-                'label' => 'Comprador',
-                'template' => 'ReservaAdmin/show_comprador.html.twig',
-            ])
-            ->add('medioPago', null, ['label' => 'Medio de Pago'])
-            ->add('payment_id', null, ['label' => 'ID Pago Mercado Pago'])
-            ->add('preference_id', null, ['label' => 'ID Preferencia Mercado Pago'])
+            ->with('Datos de la Reserva', ['class' => 'col-md-6'])
+                ->add('id', null, ['label' => 'ID Reserva'])
+                ->add('estado', null, [
+                    'label' => 'Estado',
+                    'template' => 'ReservaAdmin/show_estado.html.twig',
+                ])
+                ->add('user', null, [
+                    'label' => 'Comprador',
+                    'template' => 'ReservaAdmin/show_comprador.html.twig',
+                ])
+                ->add('detalleViaje', null, [
+                    'label' => 'Detalle del Viaje',
+                    'template' => 'ReservaAdmin/show_detalle_viaje.html.twig',
+                ])
+                ->add('montoTotal', null, [
+                    'label' => 'Monto Total',
+                    'template' => 'ReservaAdmin/show_monto.html.twig',
+                ])
+            ->end()
+            ->with('Información de Pago', ['class' => 'col-md-6'])
+                ->add('medioPago', null, ['label' => 'Medio de Pago'])
+                ->add('payment_id', null, ['label' => 'ID Pago Mercado Pago'])
+                ->add('preference_id', null, ['label' => 'ID Preferencia Mercado Pago'])
+            ->end()
+            ->with('Asientos Comprados y Ocupantes', ['class' => 'col-md-12'])
+                ->add('boletos', null, [
+                    'label' => 'Asientos y Ocupantes',
+                    'template' => 'ReservaAdmin/show_boletos.html.twig',
+                ])
+            ->end()
         ;
     }
 

@@ -1,0 +1,9 @@
+{% extends '@SonataAdmin/CRUD/base_show_field.html.twig' %}
+
+{% block field %}
+    {% if value is not null %}
+        <strong class="text-success" style="font-size: 16px;">ARS {{ (value/100)|number_format(2, ',', '.') }}</strong>
+    {% else %}
+        <span class="text-muted">ARS 0,00</span>
+    {% endif %}
+{% endblock %}
