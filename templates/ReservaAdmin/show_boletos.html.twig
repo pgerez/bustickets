@@ -27,12 +27,12 @@
                                 {% if seat and (seat.planta is not null or seat.categoria is not null) %}
                                     <div style="margin-top: 4px;">
                                         <small class="text-muted">
-                                            {% if seat.planta is not null %}
-                                                {{ seat.planta == 0 ? 'P. Baja' : 'P. Alta' }}
+                                            {% if seat.plantaTexto is not empty %}
+                                                P. {{ seat.plantaTexto }}
                                             {% endif %}
-                                            {% if seat.categoria and constant('App\\Entity\\TransporteAsiento::$categorias')[seat.categoria] is defined %}
-                                                {% if seat.planta is not null %} - {% endif %}
-                                                {{ constant('App\\Entity\\TransporteAsiento::$categorias')[seat.categoria] }}
+                                            {% if seat.categoriaTexto is not empty %}
+                                                {% if seat.plantaTexto is not empty %} - {% endif %}
+                                                {{ seat.categoriaTexto }}
                                             {% endif %}
                                         </small>
                                     </div>

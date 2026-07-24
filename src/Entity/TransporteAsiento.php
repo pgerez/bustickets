@@ -66,6 +66,16 @@ class TransporteAsiento
         return array_flip(self::$plantas);
     }
 
+    public function getCategoriaTexto(): string
+    {
+        return self::$categorias[$this->categoria] ?? '';
+    }
+
+    public function getPlantaTexto(): string
+    {
+        return self::$plantas[$this->planta] ?? '';
+    }
+
     public function __toString()
     {
         return 'Asiento N° '.$this->numero;
